@@ -9,6 +9,7 @@ import {
   TextInput,
   Select,
 } from 'grommet'
+
 import {
   MapContainer,
   Marker,
@@ -16,6 +17,7 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet'
+
 import Breadcrumbs from './Breadcrumbs'
 import MapContent from './MapContent'
 
@@ -38,12 +40,21 @@ const reefTypes = {
   patch: '7085ee02-2a2e-4b42-b61e-18a78f1b8d03',
 }
 
+const reefExposures = {
+  ['very sheltered']: 'baa54e1d-4263-4273-80f5-35812304b592',
+  ['sheltered']: '051c7545-eea8-48f6-bc82-3ef66bfdfe75',
+  ['semi-exposed']: '85b26198-4e3b-459c-868c-4e0706828cce',
+  ['exposed']: '997c6cb3-c5e5-4df6-9cfa-5814a58a7b9e',
+}
+
 function SiteForm() {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
     formContent.reefType = reefTypes[formContent.reefType]
+    formContent.exposure = reefExposures[formContent.exposure]
+
     console.log('Submit triggered. Data : ', formContent)
   }
 
@@ -121,7 +132,7 @@ function SiteForm() {
             </Box>
             <Box margin="small">
               <FormField label="Exposure" name="exposure" required>
-                <TextInput name="exposure" />
+                <Select options={Object.keys(reefExposures)} name="exposure" />
               </FormField>
               <FormField label="Reef Type" name="reefType" required>
                 <Select options={Object.keys(reefTypes)} name="reefType" />
