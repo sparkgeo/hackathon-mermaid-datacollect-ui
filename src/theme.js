@@ -17,7 +17,6 @@ const colors = {
   },
   darkTheme: {
     backgroundPrimary: '#3c4043',
-
   },
   sparkgeoColors: {
     sapling: '#E1CAAB',
@@ -25,8 +24,7 @@ const colors = {
     chenin: '#E0C971',
     ronchi: '#ED8F59',
     casablanca: '#F4B449',
-
-  }
+  },
 }
 
 /*
@@ -65,7 +63,7 @@ const grommetTheme = {
         dark: 'accent-1',
         light: 'brand',
       },
-      focus: '#6FFFB0',
+      focus: colors.sparkgeoColors.sapling,
       placeholder: '#AAAAAA',
       selected: 'brand',
       text: {
