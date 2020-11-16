@@ -31,14 +31,12 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon
 
 function SiteForm() {
-  const [markerPosition, setMarkerPosition] = useState([
-    -12.4777006,
-    160.3077632,
-  ])
+  const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
 
-  useEffect(() => {
-    console.log('TODO: Change form fields for latlong')
-  }, [markerPosition])
+  // ! This is where can carry out actions based on the data in the form.
+  function submitData({ value: formContent }) {
+    console.log('Submit triggered. Data : ', formContent)
+  }
 
   return (
     <>
@@ -50,9 +48,6 @@ function SiteForm() {
         border={{ bottom: 'xsmall' }}
       >
         <Breadcrumbs />
-        <Box pad={{ vertical: 'small' }} align="center" justify="center">
-          <Button label="Save" color="status-ok" primary />
-        </Box>
       </Box>
       <Box
         margin="small"
@@ -62,7 +57,7 @@ function SiteForm() {
         direction="column"
         overflow={{ vertical: 'scroll' }}
       >
-        <Form>
+        <Form onSubmit={submitData}>
           <Box>
             <Box
               height="xxsmall"
@@ -71,8 +66,8 @@ function SiteForm() {
               border={{ size: 'xsmall', color: 'dark-3', side: 'bottom' }}
             />
             <Box margin="small">
-              <FormField label="Name" required>
-                <TextInput />
+              <FormField label="Name" name="name" required>
+                <TextInput name="name" />
               </FormField>
             </Box>
             <Box direction="row">
@@ -82,19 +77,19 @@ function SiteForm() {
                 width="medium"
                 pad={{ horizontal: 'medium' }}
               >
-                <FormField label="Country" required>
-                  <TextInput />
+                <FormField label="Country" name="country" required>
+                  <TextInput name="country" />
                 </FormField>
 
-                <FormField label="Latitude" required>
-                  <TextInput />
+                <FormField label="Latitude" name="lat" required>
+                  <TextInput value={markerPosition[0]} name="lat" />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
                 </Text>
                 <br />
-                <FormField label="Longitude" required>
-                  <TextInput />
+                <FormField label="Longitude" name="lng" required>
+                  <TextInput value={markerPosition[1]} name="lng" />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
@@ -116,21 +111,28 @@ function SiteForm() {
               </Box>
             </Box>
             <Box margin="small">
-              <FormField label="Exposure" required>
-                <TextInput />
+              <FormField label="Exposure" name="exposure" required>
+                <TextInput name="exposure" />
               </FormField>
-              <FormField label="Reef Type" required>
-                <TextInput />
+              <FormField label="Reef Type" name="reefType" required>
+                <TextInput name="reefType" />
               </FormField>
-              <FormField label="Reef Zone" required>
-                <TextInput />
+              <FormField label="Reef Zone" name="reefZone" required>
+                <TextInput name="reefZone" />
               </FormField>
             </Box>
             <hr />
             <Box margin="small">
-              <FormField label="Notes" required>
-                <TextArea id="text-area" placeholder="placeholder" />
+              <FormField label="Notes" name="notes">
+                <TextArea
+                  id="text-area"
+                  placeholder="placeholder"
+                  name="notes"
+                />
               </FormField>
+            </Box>
+            <Box pad={{ vertical: 'small' }} width="small" margin="small">
+              <Button label="Save" color="status-ok" type="submit" primary />
             </Box>
           </Box>
         </Form>
