@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+import { marker } from 'leaflet'
 import {
   Box,
   Button,
@@ -21,9 +24,7 @@ import {
 import Breadcrumbs from './Breadcrumbs'
 import MapContent from './MapContent'
 
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import { marker } from 'leaflet'
+import countries from '../lib/countries'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -62,6 +63,7 @@ function SiteForm() {
     formContent.reefType = reefTypes[formContent.reefType]
     formContent.exposure = reefExposures[formContent.exposure]
     formContent.reefZone = reefZones[formContent.reefZone]
+    formContent.country = countries[formContent.country]
 
     console.log('Submit triggered. Data : ', formContent)
   }
@@ -106,7 +108,7 @@ function SiteForm() {
                 pad={{ horizontal: 'medium' }}
               >
                 <FormField label="Country" name="country" required>
-                  <TextInput name="country" />
+                  <Select options={Object.keys(countries)} name="country" />
                 </FormField>
 
                 <FormField label="Latitude" name="lat" required>
