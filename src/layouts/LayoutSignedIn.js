@@ -22,7 +22,7 @@ function LayoutSignedIn({ children }) {
           </Box>
         </Box>
       </Header>
-      <Main>{children}</Main>
+      <Main fill>{children}</Main>
       <Footer background="dark-1">(footer)</Footer>
     </>
   )
