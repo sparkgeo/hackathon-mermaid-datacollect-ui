@@ -4,14 +4,16 @@ import { FormNext } from 'grommet-icons'
 
 const Breadcrumbs = () => {
   return (
-    <Box direction="row" pad={{ top: 'medium' }}>
-      <Anchor href="#">Projects</Anchor>
-      <FormNext />
-      <Anchor href="#">Dustin's Project</Anchor>
-      <FormNext />
-      <Anchor href="#">Sites</Anchor>
-      <FormNext />
-      <Text>Site</Text>
+    <Box pad={{ top: 'medium' }}>
+      <Box height="xxsmall" direction="row" align="center">
+        <Anchor href="#">Projects</Anchor>
+        <FormNext />
+        <Anchor href="#">Dustin's Project</Anchor>
+        <FormNext />
+        <Anchor href="#">Sites</Anchor>
+        <FormNext />
+        <Text>Site</Text>
+      </Box>{' '}
     </Box>
   )
 }
