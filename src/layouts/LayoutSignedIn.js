@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Heading, Header, Layer, Main, Box, Text } from 'grommet'
+import { Footer, Heading, Header, Layer, Main, Box, Text } from 'grommet'
 import { Menu } from 'grommet-icons'
 
 function LayoutSignedIn({ children }) {
@@ -14,14 +14,17 @@ function LayoutSignedIn({ children }) {
         <Box>
           <Heading level="4">mermaid</Heading>
         </Box>
-        <Box>Projects</Box>
-        <Box>Reference</Box>
-        <Box>DS</Box>
-        <Box>
-          <Menu />
+        <Box direction="row">
+          <Box margin={{ right: 'small' }}>Projects</Box>
+          <Box margin={{ right: 'small' }}>Reference</Box>
+          <Box margin={{ right: 'small' }}>DS</Box>
+          <Box>
+            <Menu />
+          </Box>
         </Box>
       </Header>
       <Main>{children}</Main>
+      <Footer background="dark-1">(footer)</Footer>
     </>
   )
 }
