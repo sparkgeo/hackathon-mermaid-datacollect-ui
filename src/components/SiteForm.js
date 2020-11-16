@@ -1,5 +1,14 @@
 import React from 'react'
-import { Box, Button, Text, FormField, Form, TextInput, Heading } from 'grommet'
+import {
+  Box,
+  Button,
+  Text,
+  FormField,
+  Form,
+  TextArea,
+  TextInput,
+  Heading,
+} from 'grommet'
 import { MapContainer, Marker, TileLayer } from 'react-leaflet'
 import Breadcrumbs from './Breadcrumbs'
 
@@ -19,10 +28,12 @@ function SiteForm() {
         </Box>
       </Box>
       <Box
-        margin="medium"
-        border={{ size: 'xsmall', color: 'dark-3' }}
-        width="xxlarge"
+        margin="small"
+        // border={{ size: 'xsmall', color: 'dark-3', side: 'veritcal' }}
+        width="fill"
+        height="large"
         direction="column"
+        overflow={{ vertical: 'scroll' }}
       >
         <Form>
           <Box>
@@ -38,7 +49,12 @@ function SiteForm() {
               </FormField>
             </Box>
             <Box direction="row">
-              <Box direction="column" margin="medium" width="medium">
+              <Box
+                direction="column"
+                margin="medium"
+                width="medium"
+                pad={{ horizontal: 'medium' }}
+              >
                 <FormField label="Country" required>
                   <TextInput />
                 </FormField>
@@ -58,15 +74,19 @@ function SiteForm() {
                 </Text>
                 <br />
               </Box>
-              <Box>
-                <Heading>MAP</Heading>
-                {/* <MapContainer center={[0, 0]} zoom={13} scrollWheelZoom={false}>
-                <TileLayer
-                  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Marker position={[0, 0]}></Marker>
-              </MapContainer> */}
+              <Box width="fill" height="fill">
+                <MapContainer
+                  center={[0, 0]}
+                  zoom={13}
+                  scrollWheelZoom={false}
+                  style={{ width: '800px', height: '400px' }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  {/* <Marker position={[0, 0]}></Marker> */}
+                </MapContainer>
               </Box>
             </Box>
             <Box margin="small">
@@ -80,10 +100,10 @@ function SiteForm() {
                 <TextInput />
               </FormField>
             </Box>
-            <hr />
+            {/* <hr /> */}
             <Box margin="small">
               <FormField label="Notes" required>
-                <TextInput />
+                <TextArea id="text-area" placeholder="placeholder" />
               </FormField>
             </Box>
           </Box>
