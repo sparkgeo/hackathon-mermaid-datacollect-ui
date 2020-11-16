@@ -47,6 +47,13 @@ const reefExposures = {
   ['exposed']: '997c6cb3-c5e5-4df6-9cfa-5814a58a7b9e',
 }
 
+const reefZones = {
+  ['back reef']: '06ea17cd-5d1d-46ae-a654-64901e2a9f96',
+  crest: '49c85161-99ee-4bc3-b6c4-09b5810da0a8',
+  ['fore reef']: '0e5ac2d0-d1cc-4f04-a696-f6d3db2b9ca8',
+  pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
+}
+
 function SiteForm() {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
 
@@ -54,6 +61,7 @@ function SiteForm() {
   function submitData({ value: formContent }) {
     formContent.reefType = reefTypes[formContent.reefType]
     formContent.exposure = reefExposures[formContent.exposure]
+    formContent.reefZone = reefZones[formContent.reefZone]
 
     console.log('Submit triggered. Data : ', formContent)
   }
@@ -138,7 +146,7 @@ function SiteForm() {
                 <Select options={Object.keys(reefTypes)} name="reefType" />
               </FormField>
               <FormField label="Reef Zone" name="reefZone" required>
-                <TextInput name="reefZone" />
+                <Select options={Object.keys(reefZones)} name="reefZone" />
               </FormField>
             </Box>
             <hr />
