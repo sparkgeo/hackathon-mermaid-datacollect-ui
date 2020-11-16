@@ -9,6 +9,7 @@ import { ThemeProvider } from 'styled-components'
 import { Grommet } from 'grommet'
 
 import { Layout } from './components'
+import LayoutSignedIn from './layouts/LayoutSignedIn'
 import theme from './theme'
 import './App.css'
 
@@ -16,7 +17,9 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Grommet theme={theme} full>
-        <Layout />
+        <LayoutSignedIn>
+          <h1>hello world</h1>
+        </LayoutSignedIn>
       </Grommet>
     </ThemeProvider>
   )
