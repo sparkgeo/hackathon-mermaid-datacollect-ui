@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -9,10 +9,37 @@ import {
   TextInput,
   Heading,
 } from 'grommet'
-import { MapContainer, Marker, TileLayer } from 'react-leaflet'
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from 'react-leaflet'
 import Breadcrumbs from './Breadcrumbs'
+import MapContent from './MapContent'
+
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+import { marker } from 'leaflet'
+
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+})
+
+L.Marker.prototype.options.icon = DefaultIcon
 
 function SiteForm() {
+  const [markerPosition, setMarkerPosition] = useState([
+    -12.4777006,
+    160.3077632,
+  ])
+
+  useEffect(() => {
+    console.log('TODO: Change form fields for latlong')
+  }, [markerPosition])
+
   return (
     <>
       <Box
@@ -29,7 +56,7 @@ function SiteForm() {
       </Box>
       <Box
         margin="small"
-        // border={{ size: 'xsmall', color: 'dark-3', side: 'veritcal' }}
+        border={{ size: 'xsmall', color: 'dark-3' }}
         width="fill"
         height="large"
         direction="column"
@@ -76,16 +103,15 @@ function SiteForm() {
               </Box>
               <Box width="fill" height="fill">
                 <MapContainer
-                  center={[0, 0]}
-                  zoom={13}
-                  scrollWheelZoom={false}
+                  center={markerPosition}
+                  zoom={4}
+                  scrollWheelZoom
                   style={{ width: '800px', height: '400px' }}
                 >
-                  <TileLayer
-                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  <MapContent
+                    markerPosition={markerPosition}
+                    setMarkerPosition={setMarkerPosition}
                   />
-                  {/* <Marker position={[0, 0]}></Marker> */}
                 </MapContainer>
               </Box>
             </Box>
@@ -100,7 +126,7 @@ function SiteForm() {
                 <TextInput />
               </FormField>
             </Box>
-            {/* <hr /> */}
+            <hr />
             <Box margin="small">
               <FormField label="Notes" required>
                 <TextArea id="text-area" placeholder="placeholder" />
