@@ -24,7 +24,9 @@ function MapContent(props) {
 
 MapContent.propTypes = {
   setMarkerPosition: PropTypes.func.isRequired,
-  markerPosition: PropTypes.arrayOf(PropTypes.number).isRequired,
+  markerPosition: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  ).isRequired,
 }
 
 export default MapContent

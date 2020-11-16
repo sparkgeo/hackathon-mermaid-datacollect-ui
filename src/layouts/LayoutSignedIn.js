@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
 import { Footer, Heading, Header, Layer, Main, Box, Text } from 'grommet'
 import { Menu } from 'grommet-icons'
 
