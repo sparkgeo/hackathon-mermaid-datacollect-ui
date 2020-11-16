@@ -94,7 +94,7 @@ const grommetTheme = {
       'status-critical': '#FF4040',
       'status-error': '#FF4040',
       'status-warning': '#FFAA15',
-      'status-ok': '#00C781',
+      'status-ok': '#b9d68c',
       'status-unknown': '#CCCCCC',
       'status-disabled': '#CCCCCC',
     },
