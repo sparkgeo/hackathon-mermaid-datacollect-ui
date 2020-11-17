@@ -1,6 +1,7 @@
 import React from 'react'
 import { Footer, Heading, Header, Layer, Main, Box, Text } from 'grommet'
 import { Menu } from 'grommet-icons'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 function LayoutSignedIn({ children }) {
   return (
@@ -22,7 +23,18 @@ function LayoutSignedIn({ children }) {
           </Box>
         </Box>
       </Header>
-      <Main fill>{children}</Main>
+      <Main>
+        <Box
+          direction="row"
+          pad={{ horizontal: 'small' }}
+          justify="between"
+          height="xsmall"
+          border={{ bottom: 'xsmall' }}
+        >
+          <Breadcrumbs />
+        </Box>
+        <>{children}</>
+      </Main>
       <Footer background="dark-1">(footer)</Footer>
     </>
   )

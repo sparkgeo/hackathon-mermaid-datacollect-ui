@@ -21,7 +21,6 @@ import {
   useMapEvents,
 } from 'react-leaflet'
 
-import Breadcrumbs from './Breadcrumbs'
 import MapContent from './MapContent'
 
 import countries from '../lib/countries'
@@ -70,15 +69,6 @@ function SiteForm() {
 
   return (
     <>
-      <Box
-        direction="row"
-        pad={{ horizontal: 'small' }}
-        justify="between"
-        height="xsmall"
-        border={{ bottom: 'xsmall' }}
-      >
-        <Breadcrumbs />
-      </Box>
       <Box
         margin="small"
         border={{ size: 'xsmall', color: 'dark-3' }}
