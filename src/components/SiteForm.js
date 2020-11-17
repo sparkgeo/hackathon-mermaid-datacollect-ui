@@ -69,10 +69,8 @@ function SiteForm() {
   function submitData({ value: formContent }) {
     formContent.exposure = reefExposures[formContent.exposure]
     formContent.reefType = reefTypes[formContent.reefType]
-    formContent.reef_zone = reefZones[formContent.reefZone]
+    formContent.reefZone = reefZones[formContent.reefZone]
     formContent.country = countries[formContent.country]
-
-    console.log('Submit triggered. Data : ', formContent)
 
     DataStore.save(new Site(formContent))
       .then((response) => {
