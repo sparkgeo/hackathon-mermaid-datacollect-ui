@@ -80,7 +80,7 @@ function SiteForm({ site, status }) {
         height="xsmall"
         border={{ bottom: 'xsmall' }}
       >
-        <Breadcrumbs siteName={site.name} />
+        <Breadcrumbs siteName={site ? site.name : ''} />
       </Box>
       <Box
         margin="small"
