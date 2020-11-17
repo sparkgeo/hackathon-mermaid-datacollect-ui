@@ -48,14 +48,52 @@ const reefZones = {
   pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
 }
 
+// const reverseReefZones = {}
+// Object.entries(reefZones).forEach(([key, value]) => {
+//   reverseReefZones[value] = key
+// })
+
+// const reverseCountries = {}
+// Object.entries(countries).forEach(([key, value]) => {
+//   reverseCountries[value] = key
+// })
+
+// const reverseReefTypes
+
 const EditForm = ({ record }) => {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
   const [site, updateSite] = useState()
+  const [name, setName] = useState(null)
+  const [country, setCountry] = useState(null)
+  const [exposure, setExposure] = useState(null)
+  const [reefType, setReefType] = useState(null)
+  const [reefZone, setReefZone] = useState(null)
+  const [notes, setNotes] = useState(null)
+  const [id, setId] = useState(null)
 
   useEffect(() => {
-    fetchSite(record)
-    .then((res) => {
+    fetchSite(record).then((res) => {
       console.log('FETCHED SITE', res)
+      const {
+        country,
+        createdAt,
+        exposure,
+        id,
+        latitude,
+        longitude,
+        name,
+        notes,
+        reefType,
+        reefZone,
+      } = res
+
+      setCountry(country)
+      setName(name)
+      setExposure(exposure)
+      setReefType(reefType)
+      setReefZone(reefZone)
+      setNotes(notes)
+      setId(id)
     })
   }, [])
 
@@ -66,10 +104,10 @@ const EditForm = ({ record }) => {
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
-    formContent.exposure = reefExposures[formContent.exposure]
-    formContent.reefType = reefTypes[formContent.reefType]
-    formContent.reef_zone = reefZones[formContent.reefZone]
-    formContent.country = countries[formContent.country]
+    // formContent.exposure = reefExposures[formContent.exposure]
+    // formContent.reefType = reefTypes[formContent.reefType]
+    // formContent.reef_zone = reefZones[formContent.reefZone]
+    // formContent.country = countries[formContent.country]
 
     DataStore.save(new Site(formContent))
       .then((response) => {
@@ -104,7 +142,11 @@ const EditForm = ({ record }) => {
             />
             <Box margin="small">
               <FormField label="Name" name="name" required>
-                <TextInput name="name" />
+                <TextInput
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </FormField>
             </Box>
             <Box direction="row">
@@ -115,18 +157,35 @@ const EditForm = ({ record }) => {
                 pad={{ horizontal: 'medium' }}
               >
                 <FormField label="Country" name="country" required>
-                  <Select options={Object.keys(countries)} name="country" />
+                  <Select
+                    options={Object.keys(countries)}
+                    name="country"
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                  />
                 </FormField>
 
                 <FormField label="Latitude" name="latitude" required>
-                  <TextInput value={markerPosition[0]} name="latitude" />
+                  <TextInput
+                    value={markerPosition[0]}
+                    name="latitude"
+                    onChange={(e) =>
+                      setMarkerPosition([e.target.value, markerPosition[1]])
+                    }
+                  />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
                 </Text>
                 <br />
                 <FormField label="Longitude" name="longitude" required>
-                  <TextInput value={markerPosition[1]} name="longitude" />
+                  <TextInput
+                    value={markerPosition[1]}
+                    name="longitude"
+                    onChange={(e) =>
+                      setMarkerPosition([markerPosition[0], e.target.value])
+                    }
+                  />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
@@ -149,13 +208,28 @@ const EditForm = ({ record }) => {
             </Box>
             <Box margin="small">
               <FormField label="Exposure" name="exposure" required>
-                <Select options={Object.keys(reefExposures)} name="exposure" />
+                <Select
+                  options={Object.keys(reefExposures)}
+                  name="exposure"
+                  value={exposure}
+                  onChange={(e) => setExposure(e.target.value)}
+                />
               </FormField>
               <FormField label="Reef Type" name="reefType" required>
-                <Select options={Object.keys(reefTypes)} name="reefType" />
+                <Select
+                  options={Object.keys(reefTypes)}
+                  name="reefType"
+                  value={reefType}
+                  onChange={(e) => setReefType(e.target.value)}
+                />
               </FormField>
               <FormField label="Reef Zone" name="reefZone" required>
-                <Select options={Object.keys(reefZones)} name="reefZone" />
+                <Select
+                  options={Object.keys(reefZones)}
+                  name="reefZone"
+                  value={reefZone}
+                  onChange={(e) => setReefZone(e.target.value)}
+                />
               </FormField>
             </Box>
             <hr />
@@ -165,6 +239,8 @@ const EditForm = ({ record }) => {
                   id="text-area"
                   placeholder="placeholder"
                   name="notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                 />
               </FormField>
             </Box>
@@ -179,4 +255,3 @@ const EditForm = ({ record }) => {
 }
 
 export default EditForm
-
