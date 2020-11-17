@@ -12,7 +12,7 @@ import {
   TextInput,
   Select,
 } from 'grommet'
-
+import { DataStore } from '@aws-amplify/datastore'
 import {
   MapContainer,
   Marker,
@@ -24,6 +24,7 @@ import {
 import MapContent from './MapContent'
 
 import countries from '../lib/countries'
+import { Site } from '../models'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -57,6 +58,13 @@ const reefZones = {
 function SiteForm() {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
 
+  async function fetchSites() {
+    const sites = await DataStore.query(Site)
+    console.log(sites)
+    // updateMessages(messages)
+    return sites
+  }
+
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
     formContent.reefType = reefTypes[formContent.reefType]
@@ -65,6 +73,18 @@ function SiteForm() {
     formContent.country = countries[formContent.country]
 
     console.log('Submit triggered. Data : ', formContent)
+
+    DataStore.save(new Site(formContent))
+      .then((response) => {
+        console.log('It worked ', response)
+        DataStore.query(Site)
+      })
+      .then((sites) => {
+        console.log('It worked ', sites)
+      })
+      .catch((e) => {
+        console.warn('oh noooo 👨‍🚒 ', e)
+      })
   }
 
   return (
