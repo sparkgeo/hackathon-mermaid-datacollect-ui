@@ -1,28 +1,29 @@
+.PHONY: build
+
 # https://mherman.org/blog/dockerizing-a-react-app/
+# https://dev.to/igmrrf/docker-react-exited-with-code-0-398n
 
-build-dev:
+build:
 	docker-compose build
-	# docker build -t sample:dev .
 
-start-dev:
-	docker-compose up -d
-	# docker run \
-  #   -it \
-  #   --rm \
-  #   -v ${PWD}:/app \
-  #   -v /app/node_modules \
-  #   -p 3001:3000 \
-  #   -e CHOKIDAR_USEPOLLING=true \
-  #   sample:dev
+start:
+	docker-compose up -d 
 
-stop-dev:
+stop:
 	docker-compose stop
 
-build-prod:
-	docker-compose -f docker-compose.prod.yml build
+logs:
+	docker-compose logs -f 
 
-start-prod:
-	docker-compose -f docker-compose.prod.yml up -d --build
+fresh_install:
+	make build
+	make start
 
-stop-prod:
-	docker-compose -f docker-compose.prod.yml stop
+# build-prod:
+# 	docker-compose -f docker-compose.prod.yml build
+
+# start-prod:
+# 	docker-compose -f docker-compose.prod.yml up -d --build
+
+# stop-prod:
+# 	docker-compose -f docker-compose.prod.yml stop
