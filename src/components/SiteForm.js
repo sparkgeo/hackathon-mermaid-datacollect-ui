@@ -20,7 +20,7 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet'
-import { icon as leafletIcon, Marker } from 'leaflet'
+import L, { icon as leafletIcon } from 'leaflet'
 
 import MapContent from './MapContent'
 
@@ -32,7 +32,7 @@ let DefaultIcon = leafletIcon({
   shadowUrl: iconShadow,
 })
 
-Marker.prototype.options.icon = DefaultIcon
+L.Marker.prototype.options.icon = DefaultIcon
 
 const reefTypes = {
   atoll: '16a0a961-df6d-42a5-86b8-bc30f87bab42',

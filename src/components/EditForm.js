@@ -13,7 +13,7 @@ import {
 } from 'grommet'
 import { DataStore } from '@aws-amplify/datastore'
 import { MapContainer } from 'react-leaflet'
-import { icon as leafetIcon, Marker } from 'leaflet'
+import L, { icon as leafetIcon, Marker } from 'leaflet'
 
 import MapContent from './MapContent'
 
@@ -25,7 +25,7 @@ let DefaultIcon = leafetIcon({
   shadowUrl: iconShadow,
 })
 
-Marker.prototype.options.icon = DefaultIcon
+L.Marker.prototype.options.icon = DefaultIcon
 
 const reefTypes = {
   atoll: '16a0a961-df6d-42a5-86b8-bc30f87bab42',
