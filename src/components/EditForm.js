@@ -13,7 +13,7 @@ import {
 } from 'grommet'
 import { DataStore } from '@aws-amplify/datastore'
 import { MapContainer } from 'react-leaflet'
-import L, { icon as leafetIcon, Marker } from 'leaflet'
+import L, { icon as leafetIcon } from 'leaflet'
 
 import MapContent from './MapContent'
 
@@ -49,21 +49,28 @@ const reefZones = {
   pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
 }
 
-// const reverseReefZones = {}
-// Object.entries(reefZones).forEach(([key, value]) => {
-//   reverseReefZones[value] = key
-// })
+const reverseReefZones = {}
+Object.entries(reefZones).forEach(([key, value]) => {
+  reverseReefZones[value] = key
+})
 
-// const reverseCountries = {}
-// Object.entries(countries).forEach(([key, value]) => {
-//   reverseCountries[value] = key
-// })
+const reverseCountries = {}
+Object.entries(countries).forEach(([key, value]) => {
+  reverseCountries[value] = key
+})
 
-// const reverseReefTypes
+const reverseReefTypes = {}
+Object.entries(reefTypes).forEach(([key, value]) => {
+  reverseReefTypes[value] = key
+})
+
+const reverseReefExposures = {}
+Object.entries(reefExposures).forEach(([key, value]) => {
+  reverseReefExposures[value] = key
+})
 
 const EditForm = ({ record }) => {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
-  const [site, updateSite] = useState()
   const [name, setName] = useState(null)
   const [country, setCountry] = useState(null)
   const [exposure, setExposure] = useState(null)
@@ -88,11 +95,11 @@ const EditForm = ({ record }) => {
         reefZone,
       } = res
 
-      setCountry(country)
+      setCountry(reverseCountries[country])
       setName(name)
-      setExposure(exposure)
-      setReefType(reefType)
-      setReefZone(reefZone)
+      setExposure(reverseReefExposures[exposure])
+      setReefType(reverseReefTypes[reefType])
+      setReefZone(reverseReefZones[reefZone])
       setNotes(notes)
       setId(id)
     })
@@ -104,19 +111,22 @@ const EditForm = ({ record }) => {
   }
 
   // ! This is where can carry out actions based on the data in the form.
-  function submitData({ value: formContent }) {
-    // formContent.exposure = reefExposures[formContent.exposure]
-    // formContent.reefType = reefTypes[formContent.reefType]
-    // formContent.reef_zone = reefZones[formContent.reefZone]
-    // formContent.country = countries[formContent.country]
+  function submitData() {
+    const formContent = {
+      id,
+      notes,
+      name,
+      latitude: markerPosition[0],
+      longitude: markerPosition[1],
+    }
+    formContent.exposure = reefExposures[exposure]
+    formContent.reefType = reefTypes[reefType]
+    formContent.reefZone = reefZones[reefZone]
+    formContent.country = countries[country]
 
     DataStore.save(new Site(formContent))
       .then((response) => {
         console.log('It worked ', response)
-        DataStore.query(Site)
-      })
-      .then((sites) => {
-        console.log('It worked ', sites)
       })
       .catch((e) => {
         console.warn('oh noooo 👨‍🚒 ', e)
@@ -162,7 +172,7 @@ const EditForm = ({ record }) => {
                     options={Object.keys(countries)}
                     name="country"
                     value={country}
-                    onChange={(e) => setCountry(e.target.value)}
+                    onChange={({ option }) => setCountry(option)}
                   />
                 </FormField>
 
@@ -170,6 +180,7 @@ const EditForm = ({ record }) => {
                   <TextInput
                     value={markerPosition[0]}
                     name="latitude"
+                    type="number"
                     onChange={(e) =>
                       setMarkerPosition([e.target.value, markerPosition[1]])
                     }
@@ -183,6 +194,7 @@ const EditForm = ({ record }) => {
                   <TextInput
                     value={markerPosition[1]}
                     name="longitude"
+                    type="number"
                     onChange={(e) =>
                       setMarkerPosition([markerPosition[0], e.target.value])
                     }
@@ -213,7 +225,7 @@ const EditForm = ({ record }) => {
                   options={Object.keys(reefExposures)}
                   name="exposure"
                   value={exposure}
-                  onChange={(e) => setExposure(e.target.value)}
+                  onChange={({ option }) => setExposure(option)}
                 />
               </FormField>
               <FormField label="Reef Type" name="reefType" required>
@@ -221,7 +233,7 @@ const EditForm = ({ record }) => {
                   options={Object.keys(reefTypes)}
                   name="reefType"
                   value={reefType}
-                  onChange={(e) => setReefType(e.target.value)}
+                  onChange={({ option }) => setReefType(option)}
                 />
               </FormField>
               <FormField label="Reef Zone" name="reefZone" required>
@@ -229,7 +241,7 @@ const EditForm = ({ record }) => {
                   options={Object.keys(reefZones)}
                   name="reefZone"
                   value={reefZone}
-                  onChange={(e) => setReefZone(e.target.value)}
+                  onChange={({ option }) => setReefZone(option)}
                 />
               </FormField>
             </Box>
