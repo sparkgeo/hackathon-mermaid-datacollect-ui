@@ -11,8 +11,10 @@ export declare class Site {
   readonly latitude: number;
   readonly longitude: number;
   readonly exposure: string;
-  readonly reef_zone: string;
+  readonly reefType: string;
+  readonly reefZone: string;
   readonly notes?: string;
+  readonly createdAt?: string;
   constructor(init: ModelInit<Site>);
   static copyOf(source: Site, mutator: (draft: MutableModel<Site>) => MutableModel<Site> | void): Site;
 }

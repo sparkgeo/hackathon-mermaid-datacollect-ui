@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import { marker } from 'leaflet'
 import {
   Box,
   Button,
@@ -13,13 +12,7 @@ import {
   Select,
 } from 'grommet'
 import { DataStore } from '@aws-amplify/datastore'
-import {
-  MapContainer,
-  Marker,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from 'react-leaflet'
+import { MapContainer } from 'react-leaflet'
 
 import MapContent from './MapContent'
 
@@ -55,19 +48,36 @@ const reefZones = {
   pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
 }
 
-function SiteForm() {
+const EditForm = ({ record }) => {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
+  const [site, updateSite] = useState()
+
+  useEffect(() => {
+    fetchSite(record)
+    .then((res) => {
+      console.log('FETCHED SITE', res)
+    })
+  }, [])
+
+  async function fetchSite(record) {
+    const site = await DataStore.query(Site, record)
+    return site
+  }
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
     formContent.exposure = reefExposures[formContent.exposure]
     formContent.reefType = reefTypes[formContent.reefType]
-    formContent.reefZone = reefZones[formContent.reefZone]
+    formContent.reef_zone = reefZones[formContent.reefZone]
     formContent.country = countries[formContent.country]
 
     DataStore.save(new Site(formContent))
       .then((response) => {
         console.log('It worked ', response)
+        DataStore.query(Site)
+      })
+      .then((sites) => {
+        console.log('It worked ', sites)
       })
       .catch((e) => {
         console.warn('oh noooo 👨‍🚒 ', e)
@@ -168,4 +178,5 @@ function SiteForm() {
   )
 }
 
-export default SiteForm
+export default EditForm
+

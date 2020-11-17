@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import CreateRecord from './CreateRecord'
 import HomePage from './HomePage'
+import EditRecord from './EditRecord'
 
 export default function Routes() {
   return (
@@ -15,7 +16,9 @@ export default function Routes() {
       <Route path="/record/:record" exact>
         view
       </Route>
-      <Route path="/record/:record/edit">edit</Route>
+      <Route path="/record/:record/edit">
+        <EditRecord />
+      </Route>
     </Router>
   )
 }

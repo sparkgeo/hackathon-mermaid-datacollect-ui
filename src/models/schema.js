@@ -45,8 +45,15 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "reef_zone": {
-                    "name": "reef_zone",
+                "reefType": {
+                    "name": "reefType",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "reefZone": {
+                    "name": "reefZone",
                     "isArray": false,
                     "type": "String",
                     "isRequired": true,
@@ -54,6 +61,13 @@ export const schema = {
                 },
                 "notes": {
                     "name": "notes",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -72,5 +86,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "5f2b5c4789a911f078c122c94f0216bc"
+    "version": "2bc8a1d98613666ba569946e3a2a230c"
 };

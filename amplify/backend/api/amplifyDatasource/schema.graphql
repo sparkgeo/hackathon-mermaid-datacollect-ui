@@ -5,7 +5,8 @@ type Site @model {
   latitude: Float!
   longitude: Float!
   exposure: String!
-  reef_zone: String!
+  reefType: String!
+  reefZone: String!
   notes: String
   createdAt: String
 }
