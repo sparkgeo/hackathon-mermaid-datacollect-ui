@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import { marker } from 'leaflet'
+import * as L from 'leaflet'
 import {
   Box,
   Button,
