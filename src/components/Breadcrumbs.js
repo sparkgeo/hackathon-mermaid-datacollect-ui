@@ -4,7 +4,6 @@ import { FormNext } from 'grommet-icons'
 import { useLocation } from 'react-router-dom'
 
 const Breadcrumbs = () => {
-  console.log(window.location.href)
   const { pathname } = window.location
 
   const newRecord = /new/.test(pathname)
@@ -14,28 +13,28 @@ const Breadcrumbs = () => {
   return (
     <Box pad={{ top: 'medium' }}>
       <Box height="xxsmall" direction="row" align="center">
-        <Anchor href="#">Projects</Anchor>
+        <Anchor href="/">Projects</Anchor>
         <FormNext />
-        <Anchor href="#">Dustin's Project</Anchor>
+        <Anchor href="/">Dustin's Project</Anchor>
         <FormNext />
         <Anchor href="/">Site List</Anchor>
 
         {newRecord && (
           <>
             <FormNext />
-            <Anchor href="#">New</Anchor>
+            <Text href="#">New</Text>
           </>
         )}
         {viewRecord && (
           <>
             <FormNext />
-            <Anchor href="#">Site</Anchor>
+            <Text href="#">Site</Text>
           </>
         )}
         {editRecord && (
           <>
             <FormNext />
-            <Anchor href="#">edit</Anchor>
+            <Text href="#">edit</Text>
           </>
         )}
       </Box>{' '}

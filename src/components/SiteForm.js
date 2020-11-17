@@ -110,14 +110,22 @@ function SiteForm() {
                 </FormField>
 
                 <FormField label="Latitude" name="latitude" required>
-                  <TextInput value={markerPosition[0]} name="latitude" />
+                  <TextInput
+                    value={markerPosition[0]}
+                    name="latitude"
+                    type="number"
+                  />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
                 </Text>
                 <br />
                 <FormField label="Longitude" name="longitude" required>
-                  <TextInput value={markerPosition[1]} name="longitude" />
+                  <TextInput
+                    value={markerPosition[1]}
+                    name="longitude"
+                    type="number"
+                  />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
