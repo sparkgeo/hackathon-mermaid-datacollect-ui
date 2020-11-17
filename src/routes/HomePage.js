@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { retrieveAllRecords } from '../lib/api'
+import TableSites from '../components/TableSites'
 
 export default function HomePage() {
   const [records, setRecords] = useState([])
@@ -24,5 +25,5 @@ export default function HomePage() {
   if (loading) return <h1>loading</h1>
   if (error) return <h1>{error}</h1>
 
-  return <div>Home Page</div>
+  return <TableSites sites={records} />
 }
