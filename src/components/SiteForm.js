@@ -27,9 +27,6 @@ import MapContent from './MapContent'
 import PDB from '../pdb'
 import countries from '../lib/countries'
 
-import PDB from '../PouchDb'
-
-
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,

@@ -3,6 +3,9 @@
 # https://mherman.org/blog/dockerizing-a-react-app/
 # https://dev.to/igmrrf/docker-react-exited-with-code-0-398n
 
+install:
+	npm i
+
 build:
 	npm run build
 
