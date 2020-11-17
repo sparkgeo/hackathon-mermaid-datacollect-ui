@@ -4,18 +4,23 @@
 # https://dev.to/igmrrf/docker-react-exited-with-code-0-398n
 
 build:
-	docker-compose build
+	npm run build
 
 start:
 	docker-compose up -d 
 
 stop:
-	docker-compose stop
+	docker-compose down
+
+kill:
+	docker-compose down -v
+	rm -fr node_modules
+	rm -fr build
 
 logs:
-	docker-compose logs -f 
+	docker-compose logs -f webapp
 
-fresh_install:
+fresh_install: kill
 	make build
 	make start
 

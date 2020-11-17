@@ -26,6 +26,9 @@ import MapContent from './MapContent'
 
 import countries from '../lib/countries'
 
+import PDB from '../PouchDb'
+
+
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
@@ -57,6 +60,8 @@ const reefZones = {
 
 function SiteForm() {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
+  const pdb = new PDB()
+
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
@@ -66,6 +71,8 @@ function SiteForm() {
     formContent.country = countries[formContent.country]
 
     console.log('Submit triggered. Data : ', formContent)
+    // pdb.saveSite(site._id, formContent)
+
   }
 
   return (

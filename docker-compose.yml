@@ -2,19 +2,26 @@ version: '3.7'
 
 services:
 
-  webapp:
-    container_name: webapp
-    tty: true
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - '$PWD:/app'
-      - '/app/node_modules'
+  # webapp:
+  #   container_name: webapp
+  #   tty: true
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - '$PWD:/app'
+  #     - '/app/node_modules'
+  #   ports:
+  #     - 3001:3000
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
+
+  webapp2:
+    image: nginx
     ports:
-      - 3001:3000
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+        - 3002:80
+    volumes:
+        - "$PWD/build:/usr/share/nginx/html:ro"
 
   couchdb:
     container_name: couchdb
