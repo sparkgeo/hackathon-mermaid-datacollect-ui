@@ -121,15 +121,15 @@ function SiteForm() {
                   <Select options={Object.keys(countries)} name="country" />
                 </FormField>
 
-                <FormField label="Latitude" name="lat" required>
-                  <TextInput value={markerPosition[0]} name="lat" />
+                <FormField label="Latitude" name="latitude" required>
+                  <TextInput value={markerPosition[0]} name="latitude" />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
                 </Text>
                 <br />
-                <FormField label="Longitude" name="lng" required>
-                  <TextInput value={markerPosition[1]} name="lng" />
+                <FormField label="Longitude" name="longitude" required>
+                  <TextInput value={markerPosition[1]} name="longitude" />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
