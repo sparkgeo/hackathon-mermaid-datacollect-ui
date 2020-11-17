@@ -67,9 +67,9 @@ function SiteForm() {
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
-    formContent.reefType = reefTypes[formContent.reefType]
     formContent.exposure = reefExposures[formContent.exposure]
-    formContent.reefZone = reefZones[formContent.reefZone]
+    formContent.reefType = reefTypes[formContent.reefType]
+    formContent.reef_zone = reefZones[formContent.reefZone]
     formContent.country = countries[formContent.country]
 
     console.log('Submit triggered. Data : ', formContent)
