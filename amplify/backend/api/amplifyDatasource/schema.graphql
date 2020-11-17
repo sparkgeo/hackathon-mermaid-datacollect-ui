@@ -1,0 +1,11 @@
+type Site @model {
+  id: ID!
+  name: String!
+  country: String!
+  latitude: Float!
+  longitude: Float!
+  exposure: String!
+  reef_zone: String!
+  notes: String
+  createdAt: String
+}
