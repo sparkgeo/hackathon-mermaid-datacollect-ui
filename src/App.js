@@ -26,6 +26,7 @@ function App() {
   useEffect(() => {
     async function fetchSites() {
       const sites = await pdb.getAllSites()
+      console.log('Sites fetched: ', sites)
       setSites(sites)
       setStatus('')
     }

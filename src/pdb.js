@@ -11,12 +11,14 @@ export default class PBD {
   }
 
   syncPDB() {
-    this.db.replicate.to(remoteCouch)
     this.db.replicate.from(remoteCouch)
   }
 
   async getAllSites() {
-    let allSites = await this.db.allDocs({ include_docs: true })
+    let allSites = await this.db.allDocs({
+      include_docs: true,
+      conflicts: true,
+    })
     let sites = {}
 
     allSites.rows.forEach((s) => (sites[s.id] = s.doc))
@@ -50,7 +52,10 @@ export default class PBD {
       })
       .then((response) => {
         console.log('response ', response)
-        this.syncPDB()
+        this.db.replicate.to(remoteCouch)
+      })
+      .catch((err) => {
+        console.log('error: ', error)
       })
   }
 }

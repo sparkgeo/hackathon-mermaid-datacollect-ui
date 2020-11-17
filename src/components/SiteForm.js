@@ -25,7 +25,11 @@ import Breadcrumbs from './Breadcrumbs'
 import MapContent from './MapContent'
 
 import PDB from '../pdb'
+import convertToName from '../helpers/convertToName'
 import countries from '../lib/countries'
+import reef_types from '../lib/reef_types'
+import reef_zones from '../lib/reef_zones'
+import reef_exposures from '../lib/reef_exposures'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -36,60 +40,39 @@ L.Marker.prototype.options.icon = DefaultIcon
 
 function SiteForm({ site, status }) {
   const pdb = new PDB()
-  const reefTypes = {
-    atoll: '16a0a961-df6d-42a5-86b8-bc30f87bab42',
-    barrier: '2b99cdf4-9566-4e60-8700-4ec3b9c7e322',
-    fringing: '19534716-b138-49b1-bbd8-420df9243413',
-    lagoon: 'dc3aa6d3-2795-42bb-9771-39fbcdd3029d',
-    patch: '7085ee02-2a2e-4b42-b61e-18a78f1b8d03',
-  }
-
-  const reefExposures = {
-    'very sheltered': 'baa54e1d-4263-4273-80f5-35812304b592',
-    sheltered: '051c7545-eea8-48f6-bc82-3ef66bfdfe75',
-    'semi-exposed': '85b26198-4e3b-459c-868c-4e0706828cce',
-    exposed: '997c6cb3-c5e5-4df6-9cfa-5814a58a7b9e',
-  }
-
-  const reefZones = {
-    'back reef': '06ea17cd-5d1d-46ae-a654-64901e2a9f96',
-    crest: '49c85161-99ee-4bc3-b6c4-09b5810da0a8',
-    'fore reef': '0e5ac2d0-d1cc-4f04-a696-f6d3db2b9ca8',
-    pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
-  }
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
   const [siteName, setSiteName] = useState(site ? site.name : '')
   const [siteCountry, setSiteCountry] = useState(
-    site ? convertIdToName(site.country, countries) : '',
+    site ? convertToName(site.country, countries) : '',
   )
   const [reefExposure, setReefExposure] = useState(
-    site ? convertIdToName(site.reef_exposure, reefExposures) : '',
+    site ? convertToName(site.reef_exposure, reef_exposures) : '',
   )
   const [reefType, setReefType] = useState(
-    site ? convertIdToName(site.reef_type, reefTypes) : '',
+    site ? convertToName(site.reef_type, reef_types) : '',
   )
   const [reefZone, setReefZone] = useState(
-    site ? convertIdToName(site.reef_zone, reefZones) : '',
+    site ? convertToName(site.reef_zone, reef_zones) : '',
   )
   const [siteNotes, setSiteNotes] = useState(site ? site.notes : '')
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
     formContent.country = countries[formContent.country]
-    formContent.reef_type = reefTypes[formContent.reef_type]
-    formContent.reef_exposure = reefExposures[formContent.reef_exposure]
-    formContent.reef_zone = reefZones[formContent.reef_zone]
+    formContent.reef_type = reef_types[formContent.reef_type]
+    formContent.reef_exposure = reef_exposures[formContent.reef_exposure]
+    formContent.reef_zone = reef_zones[formContent.reef_zone]
     console.log('Submit triggered. Data : ', formContent)
     pdb.saveSite(site._id, formContent)
   }
 
-  function convertIdToName(id, choices) {
-    let result = ''
-    if (id !== '')
-      result = Object.keys(choices).find((key) => choices[key] === id)
+  // function convertIdToName(id, choices) {
+  //   let result = ''
+  //   if (id !== '')
+  //     result = Object.keys(choices).find((key) => choices[key] === id)
 
-    return result
-  }
+  //   return result
+  // }
 
   const handleNameChange = (event) => setSiteName(event.target.value)
   const handleNotesChange = (event) => setSiteNotes(event.target.value)
@@ -181,7 +164,7 @@ function SiteForm({ site, status }) {
             <Box margin="small">
               <FormField label="Exposure" name="reef_exposure" required>
                 <Select
-                  options={Object.keys(reefExposures)}
+                  options={Object.keys(reef_exposures)}
                   name="reef_exposure"
                   value={reefExposure}
                   onChange={({ option }) => {
@@ -191,7 +174,7 @@ function SiteForm({ site, status }) {
               </FormField>
               <FormField label="Reef Type" name="reef_type" required>
                 <Select
-                  options={Object.keys(reefTypes)}
+                  options={Object.keys(reef_types)}
                   name="reef_type"
                   value={reefType}
                   onChange={({ option }) => {
@@ -201,7 +184,7 @@ function SiteForm({ site, status }) {
               </FormField>
               <FormField label="Reef Zone" name="reef_zone" required>
                 <Select
-                  options={Object.keys(reefZones)}
+                  options={Object.keys(reef_zones)}
                   name="reef_zone"
                   value={reefZone}
                   onChange={({ option }) => {
