@@ -18,7 +18,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "https://collect-mermaid-replugged-amplified.netlify.app/",
+  "start_url": "https://collect-mermaid-replugged-amplified.netlify.app",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"
