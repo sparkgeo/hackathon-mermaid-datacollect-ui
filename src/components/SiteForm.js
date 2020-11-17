@@ -22,6 +22,7 @@ import MapContent from './MapContent'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import { marker } from 'leaflet'
+import PDB from '../pdb'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -30,16 +31,34 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon
 
-function SiteForm() {
+function SiteForm({ site, status }) {
+  const pdb = new PDB()
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
-
+  const [siteName, setSiteName] = useState(site ? site.name : '')
+  const [siteCountry, setSiteCountry] = useState(site ? site.country : '')
+  const [reefExposure, setReefExposure] = useState(
+    site ? site.reef_exposure : '',
+  )
+  const [reefType, setReefType] = useState(site ? site.reef_type : '')
+  const [reefZone, setReefZone] = useState(site ? site.reef_zone : '')
+  const [siteNotes, setSiteNotes] = useState(site ? site.notes : '')
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
-    console.log('Submit triggered. Data : ', formContent)
+    // console.log('Submit triggered. Data : ', formContent)
+    pdb.saveSite(site._id, formContent)
   }
 
+  const handleNameChange = (event) => setSiteName(event.target.value)
+  const handleCountryChange = (event) => setSiteCountry(event.target.value)
+  const handleExposureChange = (event) => setReefExposure(event.target.value)
+  const handleTypeChange = (event) => setReefType(event.target.value)
+  const handleZoneChange = (event) => setReefZone(event.target.value)
+  const handleNotesChange = (event) => setSiteNotes(event.target.value)
+
+  if (status === 'loading') return <Box>Loading</Box>
+
   return (
-    <>
+    <Box>
       <Box
         direction="row"
         pad={{ horizontal: 'small' }}
@@ -67,7 +86,11 @@ function SiteForm() {
             />
             <Box margin="small">
               <FormField label="Name" name="name" required>
-                <TextInput name="name" />
+                <TextInput
+                  name="name"
+                  value={siteName}
+                  onChange={handleNameChange}
+                />
               </FormField>
             </Box>
             <Box direction="row">
@@ -78,7 +101,11 @@ function SiteForm() {
                 pad={{ horizontal: 'medium' }}
               >
                 <FormField label="Country" name="country" required>
-                  <TextInput name="country" />
+                  <TextInput
+                    name="country"
+                    value={siteCountry}
+                    onChange={handleCountryChange}
+                  />
                 </FormField>
 
                 <FormField label="Latitude" name="lat" required>
@@ -111,14 +138,26 @@ function SiteForm() {
               </Box>
             </Box>
             <Box margin="small">
-              <FormField label="Exposure" name="exposure" required>
-                <TextInput name="exposure" />
+              <FormField label="Exposure" name="reef_exposure" required>
+                <TextInput
+                  name="reef_exposure"
+                  value={reefExposure}
+                  onChange={handleExposureChange}
+                />
               </FormField>
-              <FormField label="Reef Type" name="reefType" required>
-                <TextInput name="reefType" />
+              <FormField label="Reef Type" name="reef_type" required>
+                <TextInput
+                  name="reef_type"
+                  value={reefType}
+                  onChange={handleTypeChange}
+                />
               </FormField>
-              <FormField label="Reef Zone" name="reefZone" required>
-                <TextInput name="reefZone" />
+              <FormField label="Reef Zone" name="reef_zone" required>
+                <TextInput
+                  name="reef_zone"
+                  value={reefZone}
+                  onChange={handleZoneChange}
+                />
               </FormField>
             </Box>
             <hr />
@@ -128,6 +167,8 @@ function SiteForm() {
                   id="text-area"
                   placeholder="placeholder"
                   name="notes"
+                  value={siteNotes}
+                  onChange={handleNotesChange}
                 />
               </FormField>
             </Box>
@@ -137,7 +178,7 @@ function SiteForm() {
           </Box>
         </Form>
       </Box>
-    </>
+    </Box>
   )
 }
 
