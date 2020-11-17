@@ -13,6 +13,7 @@ import {
 } from 'grommet'
 import { DataStore } from '@aws-amplify/datastore'
 import { MapContainer } from 'react-leaflet'
+import { L } from 'leaflet'
 
 import MapContent from './MapContent'
 
