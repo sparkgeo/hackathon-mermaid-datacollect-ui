@@ -13,14 +13,14 @@ import {
 } from 'grommet'
 import { DataStore } from '@aws-amplify/datastore'
 import { MapContainer } from 'react-leaflet'
-import { L } from 'leaflet'
+import { icon as leafetIcon } from 'leaflet'
 
 import MapContent from './MapContent'
 
 import countries from '../lib/countries'
 import { Site } from '../models'
 
-let DefaultIcon = L.icon({
+let DefaultIcon = leafetIcon({
   iconUrl: icon,
   shadowUrl: iconShadow,
 })
