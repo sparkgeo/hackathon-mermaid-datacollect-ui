@@ -70,6 +70,7 @@ function SiteForm() {
     formContent.exposure = reefExposures[formContent.exposure]
     formContent.reefType = reefTypes[formContent.reefType]
     formContent.reef_zone = reefZones[formContent.reefZone]
+
     formContent.country = countries[formContent.country]
 
     console.log('Submit triggered. Data : ', formContent)

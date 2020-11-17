@@ -1,12 +1,13 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import CreateRecord from './CreateRecord'
+import HomePage from './HomePage'
 
 export default function Routes() {
   return (
     <Router>
       <Route path="/" exact>
-        home
+        <HomePage />
       </Route>
       <Route path="/new">
         <CreateRecord />
