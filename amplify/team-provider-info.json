@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-hackathon-mermaid-datacollect-ui-dev-162200-authRole",
+      "UnauthRoleArn": "arn:aws:iam::392089539462:role/amplify-hackathon-mermaid-datacollect-ui-dev-162200-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::392089539462:role/amplify-hackathon-mermaid-datacollect-ui-dev-162200-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-hackathon-mermaid-datacollect-ui-dev-162200-deployment",
+      "UnauthRoleName": "amplify-hackathon-mermaid-datacollect-ui-dev-162200-unauthRole",
+      "StackName": "amplify-hackathon-mermaid-datacollect-ui-dev-162200",
+      "StackId": "arn:aws:cloudformation:us-west-2:392089539462:stack/amplify-hackathon-mermaid-datacollect-ui-dev-162200/eb3055f0-286a-11eb-b8cf-0ae2a0ed6ab3",
+      "AmplifyAppId": "d25d49bl0t3vo3"
+    }
+  }
+}
