@@ -6,7 +6,7 @@ function MapContent(props) {
   const { setMarkerPosition, markerPosition } = props
 
   useMapEvents({
-    click: (e) => {
+    click: e => {
       setMarkerPosition([e.latlng.lat.toFixed(3), e.latlng.lng.toFixed(3)])
     },
   })

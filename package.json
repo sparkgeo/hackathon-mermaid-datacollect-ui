@@ -19,7 +19,9 @@
     "test": "react-scripts test",
     "lint": "eslint './src/**/*.js'",
     "lint:fix": "eslint './src/**/*.js' --fix",
-    "plop": "plop"
+    "plop": "plop",
+    "prettier": "prettier --write ./src/**/*.js "
+
   },
   "browserslist": {
     "production": [

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import * as L from 'leaflet'
@@ -13,13 +13,7 @@ import {
   Select,
 } from 'grommet'
 
-import {
-  MapContainer,
-  Marker,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from 'react-leaflet'
+import { MapContainer } from 'react-leaflet'
 
 import Breadcrumbs from './Breadcrumbs'
 import MapContent from './MapContent'
@@ -42,16 +36,16 @@ const reefTypes = {
 }
 
 const reefExposures = {
-  ['very sheltered']: 'baa54e1d-4263-4273-80f5-35812304b592',
-  ['sheltered']: '051c7545-eea8-48f6-bc82-3ef66bfdfe75',
-  ['semi-exposed']: '85b26198-4e3b-459c-868c-4e0706828cce',
-  ['exposed']: '997c6cb3-c5e5-4df6-9cfa-5814a58a7b9e',
+  'very sheltered': 'baa54e1d-4263-4273-80f5-35812304b592',
+  sheltered: '051c7545-eea8-48f6-bc82-3ef66bfdfe75',
+  'semi-exposed': '85b26198-4e3b-459c-868c-4e0706828cce',
+  exposed: '997c6cb3-c5e5-4df6-9cfa-5814a58a7b9e',
 }
 
 const reefZones = {
-  ['back reef']: '06ea17cd-5d1d-46ae-a654-64901e2a9f96',
+  'back reef': '06ea17cd-5d1d-46ae-a654-64901e2a9f96',
   crest: '49c85161-99ee-4bc3-b6c4-09b5810da0a8',
-  ['fore reef']: '0e5ac2d0-d1cc-4f04-a696-f6d3db2b9ca8',
+  'fore reef': '0e5ac2d0-d1cc-4f04-a696-f6d3db2b9ca8',
   pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Footer, Heading, Header, Layer, Main, Box, Text } from 'grommet'
+import { Footer, Heading, Header, Main, Box } from 'grommet'
 import { Menu } from 'grommet-icons'
 
 function LayoutSignedIn({ children }) {
