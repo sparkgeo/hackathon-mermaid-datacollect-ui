@@ -66,14 +66,6 @@ function SiteForm({ site, status }) {
     pdb.saveSite(site._id, formContent)
   }
 
-  // function convertIdToName(id, choices) {
-  //   let result = ''
-  //   if (id !== '')
-  //     result = Object.keys(choices).find((key) => choices[key] === id)
-
-  //   return result
-  // }
-
   const handleNameChange = (event) => setSiteName(event.target.value)
   const handleNotesChange = (event) => setSiteNotes(event.target.value)
 
@@ -88,7 +80,7 @@ function SiteForm({ site, status }) {
         height="xsmall"
         border={{ bottom: 'xsmall' }}
       >
-        <Breadcrumbs />
+        <Breadcrumbs siteName={site.name} />
       </Box>
       <Box
         margin="small"
