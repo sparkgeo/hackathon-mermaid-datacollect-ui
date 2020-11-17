@@ -84,7 +84,7 @@ function TableSites(props) {
               <Button label="Create new" primary />
             </Anchor>
             <Button
-              label="Clear Loacal Data"
+              label="Clear Local Data"
               onClick={() => setClearConfirmModal(true)}
               primary
             />

@@ -77,16 +77,13 @@ const EditForm = ({ record }) => {
   const [reefType, setReefType] = useState(null)
   const [reefZone, setReefZone] = useState(null)
   const [notes, setNotes] = useState(null)
-  const [id, setId] = useState(null)
+  const [originalRecord, setOriginalRecord] = useState({})
 
   useEffect(() => {
     fetchSite(record).then((res) => {
-      console.log('FETCHED SITE', res)
       const {
         country,
-        createdAt,
         exposure,
-        id,
         latitude,
         longitude,
         name,
@@ -101,7 +98,8 @@ const EditForm = ({ record }) => {
       setReefType(reverseReefTypes[reefType])
       setReefZone(reverseReefZones[reefZone])
       setNotes(notes)
-      setId(id)
+      setOriginalRecord(res)
+      setMarkerPosition([latitude, longitude])
     })
   }, [])
 
@@ -112,19 +110,18 @@ const EditForm = ({ record }) => {
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData() {
-    const formContent = {
-      id,
-      notes,
-      name,
-      latitude: markerPosition[0],
-      longitude: markerPosition[1],
-    }
-    formContent.exposure = reefExposures[exposure]
-    formContent.reefType = reefTypes[reefType]
-    formContent.reefZone = reefZones[reefZone]
-    formContent.country = countries[country]
-
-    DataStore.save(new Site(formContent))
+    DataStore.save(
+      Site.copyOf(originalRecord, (updated) => {
+        updated.exposure = reefExposures[exposure]
+        updated.reefType = reefTypes[reefType]
+        updated.reefZone = reefZones[reefZone]
+        updated.country = countries[country]
+        updated.notes = notes
+        updated.name = name
+        updated.latitude = Number(markerPosition[0])
+        updated.longitude = Number(markerPosition[1])
+      }),
+    )
       .then((response) => {
         console.log('It worked ', response)
       })
