@@ -73,8 +73,6 @@ function SiteForm() {
 
     formContent.country = countries[formContent.country]
 
-    console.log('Submit triggered. Data : ', formContent)
-
     DataStore.save(new Site(formContent))
       .then((response) => {
         console.log('It worked ', response)
