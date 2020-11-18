@@ -20,11 +20,16 @@ kill:
 	rm -fr node_modules
 	rm -fr build
 
+cors: 
+	npm run cors
+
 logs:
 	docker-compose logs -f webapp
 
 fresh_install: kill
 	make build
+	sleep 10
+	make cors
 	make start
 
 # build-prod:
