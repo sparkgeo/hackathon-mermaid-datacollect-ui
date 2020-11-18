@@ -1,37 +1,32 @@
+import { Button } from 'grommet'
 import React, { useEffect, useState } from 'react'
 import { Table, Td, Th, Tr, Column } from './commonUI'
+import { Link } from 'react-router-dom'
 
-const SiteList = ({ siteService }) => {
-  const [sites, setSites] = useState([])
-
-  useEffect(() => {
-    const getAllSites = () => {
-      siteService.getSites().then((response) => {
-        setSites(response.rows)
-      })
-    }
-    getAllSites()
-    siteService.clientDb
-      .changes({ since: 'now', live: true })
-      .on('change', getAllSites)
-  }, [siteService])
-
+const SiteList = ({ sites, editable }) => {
   return (
     <Column>
-      <h2>Sites</h2>
       <Table>
         <thead>
           <Tr>
             <Th>Site Name</Th>
+            <Th>Latitude</Th>
+            <Th>Longitude</Th>
+            {editable && <Th></Th>}
           </Tr>
         </thead>
         <tbody>
           {sites.map((site) => {
-            const x = site.doc
-
             return (
-              <Tr key={x._id}>
-                <Td>{x.name}</Td>
+              <Tr key={site._id}>
+                <Td>{site.name}</Td>
+                <Td>{site.lat}</Td>
+                <Td>{site.lng}</Td>
+                {editable && (
+                  <Td>
+                    <Link to="/editsite">Edit this site instead</Link>
+                  </Td>
+                )}
               </Tr>
             )
           })}

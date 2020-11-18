@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import * as L from 'leaflet'
-import { Button, FormField, Form, TextArea, TextInput, Select } from 'grommet'
+import {
+  Button,
+  FormField,
+  Form,
+  TextArea,
+  TextInput,
+  Select,
+  Text,
+} from 'grommet'
 
 import { MapContainer } from 'react-leaflet'
 
@@ -10,6 +18,7 @@ import MapContent from './MapContent'
 
 import countries from '../lib/countries'
 import { Column, ColumnPadded, Row } from './commonUI'
+import SiteList from './SiteList'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -40,8 +49,10 @@ const reefZones = {
   pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
 }
 
-function SiteForm({ siteService }) {
+function SiteForm({ siteService, sites }) {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
+  const [similarSites, setSimilarSites] = useState([])
+  const areSimilarSites = similarSites.length > 0
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
@@ -49,23 +60,32 @@ function SiteForm({ siteService }) {
     formContent.exposure = reefExposures[formContent.exposure]
     formContent.reefZone = reefZones[formContent.reefZone]
     formContent.country = countries[formContent.country]
+
+    const newSite = {
+      ...formContent,
+      lat: markerPosition[0],
+      lng: markerPosition[1],
+    }
     siteService
-      .newSite(formContent)
+      .newSite(newSite)
       .then((response) => console.log('success', response))
       .catch((err) => {
         console.log('error', err)
       })
   }
 
+  useEffect(() => {
+    siteService.getSimilarSites(markerPosition).then((sites) => {
+      setSimilarSites(sites)
+      console.log(sites)
+    })
+  }, [markerPosition, siteService, sites])
+
   return (
     <ColumnPadded>
       <Form onSubmit={submitData}>
         <Column>
           <h2>New Site</h2>
-
-          <FormField label="Name" name="name" required>
-            <TextInput name="name" />
-          </FormField>
 
           <ColumnPadded>
             Location: click the map
@@ -78,28 +98,58 @@ function SiteForm({ siteService }) {
               <MapContent
                 markerPosition={markerPosition}
                 setMarkerPosition={setMarkerPosition}
+                similarSites={similarSites}
               />
             </MapContainer>
             {`Latitude: ${markerPosition[0]} Londitude: ${markerPosition[1]}`}
           </ColumnPadded>
-          <FormField label="Country" name="country" required>
-            <Select options={Object.keys(countries)} name="country" />
-          </FormField>
-          <FormField label="Exposure" name="exposure" required>
-            <Select options={Object.keys(reefExposures)} name="exposure" />
-          </FormField>
-          <FormField label="Reef Type" name="reefType" required>
-            <Select options={Object.keys(reefTypes)} name="reefType" />
-          </FormField>
-          <FormField label="Reef Zone" name="reefZone" required>
-            <Select options={Object.keys(reefZones)} name="reefZone" />
-          </FormField>
+          {areSimilarSites ? (
+            <Row>
+              <Column>
+                <Text color="#F00">
+                  There are similar sites for this location. Please review them
+                  to make sure you arent duplicating a site.
+                </Text>
 
-          <FormField label="Notes" name="notes">
-            <TextArea id="text-area" placeholder="placeholder" name="notes" />
-          </FormField>
+                <Button
+                  label="Ignore similar sites, I want to create a new site"
+                  color="status-ok"
+                  primary
+                  onClick={() => setSimilarSites([])}
+                />
+                <h2>Similar sites</h2>
+                <SiteList sites={similarSites} editable />
+              </Column>
+            </Row>
+          ) : (
+            <>
+              <FormField label="Name" name="name" required>
+                <TextInput name="name" />
+              </FormField>
+              <FormField label="Country" name="country" required>
+                <Select options={Object.keys(countries)} name="country" />
+              </FormField>
+              <FormField label="Exposure" name="exposure" required>
+                <Select options={Object.keys(reefExposures)} name="exposure" />
+              </FormField>
+              <FormField label="Reef Type" name="reefType" required>
+                <Select options={Object.keys(reefTypes)} name="reefType" />
+              </FormField>
+              <FormField label="Reef Zone" name="reefZone" required>
+                <Select options={Object.keys(reefZones)} name="reefZone" />
+              </FormField>
 
-          <Button label="Save" color="status-ok" type="submit" primary />
+              <FormField label="Notes" name="notes">
+                <TextArea
+                  id="text-area"
+                  placeholder="placeholder"
+                  name="notes"
+                />
+              </FormField>
+
+              <Button label="Save" color="status-ok" type="submit" primary />
+            </>
+          )}
         </Column>
       </Form>
     </ColumnPadded>

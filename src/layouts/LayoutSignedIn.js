@@ -2,6 +2,7 @@ import React from 'react'
 import { Footer, Heading, Header, Main, Box } from 'grommet'
 import { Menu } from 'grommet-icons'
 import { Row } from '../components/commonUI'
+import { Link } from 'react-router-dom'
 
 function LayoutSignedIn({ children }) {
   return (
@@ -23,6 +24,16 @@ function LayoutSignedIn({ children }) {
           </Box>
         </Box>
       </Header>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">New Site</Link>
+          </li>
+          <li>
+            <Link to="/sites">All Sites</Link>
+          </li>
+        </ul>
+      </nav>
       <Main fill>
         <Row>{children}</Row>
       </Main>

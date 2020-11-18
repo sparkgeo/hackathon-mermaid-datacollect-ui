@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb'
+import * as turf from '@turf/turf'
 
 class SiteService {
   clientDb
@@ -23,7 +24,25 @@ class SiteService {
   }
 
   getSites = () => {
-    return this.clientDb.allDocs({ include_docs: true, descending: true })
+    return this.clientDb.allDocs({ include_docs: true })
+  }
+
+  getSimilarSites = (location) => {
+    const isSiteSimilar = (site) => {
+      const locationPoint = turf.point(location)
+      const sitePoint = turf.point([site.lat, site.lng])
+      return (
+        turf.distance(locationPoint, sitePoint, { units: 'meters' }) < 10000
+      )
+    }
+
+    return this.clientDb
+      .allDocs({ include_docs: true })
+      .then((response) =>
+        response.rows
+          .map((row) => row.doc)
+          .filter((site) => isSiteSimilar(site)),
+      )
   }
 }
 
