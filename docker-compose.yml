@@ -24,7 +24,7 @@ services:
     volumes:
         - couch_data:/opt/couchdb/data
     env_file:
-        - .env
+        - .env_sample
 
 volumes:
     couch_data:
