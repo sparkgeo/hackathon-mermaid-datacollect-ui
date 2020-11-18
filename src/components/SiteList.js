@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useHistory , Link} from 'react-router-dom'
 import {
   Box,
   Button,
@@ -19,6 +19,12 @@ import reef_zones from '../lib/reef_zones'
 import reef_exposures from '../lib/reef_exposures'
 
 function SiteList({ sites }) {
+  const history = useHistory()
+
+  const addNewSite = () => {
+    history.push('/new')
+  }
+
   const NoteTable = () => {
     const siteList = sites !== undefined ? Object.values(sites) : []
 
@@ -72,8 +78,10 @@ function SiteList({ sites }) {
         justify="between"
         height="xsmall"
         border={{ bottom: 'xsmall' }}
+        align="center"
       >
         <Breadcrumbs />
+        <Button primary label="new site" onClick={addNewSite} />
       </Box>
       <NoteTable />
     </>

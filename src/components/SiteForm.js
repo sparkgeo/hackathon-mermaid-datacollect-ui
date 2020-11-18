@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Redirect, useParams } from 'react-router-dom'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import { marker } from 'leaflet'
@@ -38,23 +39,35 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon
 
-function SiteForm({ site, status }) {
+function SiteForm({ site, addNew, status }) {
   const pdb = new PDB()
+  const { id } = useParams()
+  const [redirectTarget, setRedirectTarget] = useState(null)
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
-  const [siteName, setSiteName] = useState(site ? site.name : '')
-  const [siteCountry, setSiteCountry] = useState(
-    site ? convertToName(site.country, countries) : '',
-  )
-  const [reefExposure, setReefExposure] = useState(
-    site ? convertToName(site.reef_exposure, reef_exposures) : '',
-  )
-  const [reefType, setReefType] = useState(
-    site ? convertToName(site.reef_type, reef_types) : '',
-  )
-  const [reefZone, setReefZone] = useState(
-    site ? convertToName(site.reef_zone, reef_zones) : '',
-  )
-  const [siteNotes, setSiteNotes] = useState(site ? site.notes : '')
+  const [siteName, setSiteName] = useState('')
+  const [siteCountry, setSiteCountry] = useState('')
+  const [reefExposure, setReefExposure] = useState('')
+  const [reefType, setReefType] = useState('')
+  const [reefZone, setReefZone] = useState('')
+  const [siteNotes, setSiteNotes] = useState('')
+
+  useEffect(() => {
+    async function fetchSite() {
+      const siteView = await pdb.getSite(id)
+      if (siteView.name) setSiteName(siteView.name)
+      if (siteView.country)
+        setSiteCountry(convertToName(siteView.country, countries))
+      if (siteView.reef_exposure)
+        setReefExposure(convertToName(siteView.reef_exposure, reef_exposures))
+      if (siteView.reef_type)
+        setReefType(convertToName(siteView.reef_type, reef_types))
+      if (siteView.reef_zone)
+        setReefZone(convertToName(siteView.reef_zone, reef_zones))
+      if (siteView.notes) setSiteNotes(siteView.notes)
+    }
+
+    if (id) fetchSite()
+  }, [id])
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
@@ -62,12 +75,18 @@ function SiteForm({ site, status }) {
     formContent.reef_type = reef_types[formContent.reef_type]
     formContent.reef_exposure = reef_exposures[formContent.reef_exposure]
     formContent.reef_zone = reef_zones[formContent.reef_zone]
-    console.log('Submit triggered. Data : ', formContent)
-    pdb.saveSite(site._id, formContent)
+    if (addNew) {
+      pdb.addNewSite(formContent, setRedirectTarget)
+    } else {
+      console.log('Submit triggered. Data : ', formContent)
+      pdb.saveSite(site._id, formContent)
+    }
   }
 
   const handleNameChange = (event) => setSiteName(event.target.value)
   const handleNotesChange = (event) => setSiteNotes(event.target.value)
+
+  if (redirectTarget) return <Redirect to={`/sites/${redirectTarget}`} />
 
   if (status === 'loading') return <Box>Loading</Box>
 
@@ -80,7 +99,7 @@ function SiteForm({ site, status }) {
         height="xsmall"
         border={{ bottom: 'xsmall' }}
       >
-        <Breadcrumbs siteName={site ? site.name : ''} />
+        <Breadcrumbs siteName={siteName} />
       </Box>
       <Box
         margin="small"
@@ -197,8 +216,24 @@ function SiteForm({ site, status }) {
                 />
               </FormField>
             </Box>
-            <Box pad={{ vertical: 'small' }} width="small" margin="small">
+            <Box
+              pad={{ vertical: 'small' }}
+              width="small"
+              margin="small"
+              direction="row"
+              alignContent="between"
+            >
               <Button label="Save" color="status-ok" type="submit" primary />
+              {!addNew && (
+                <Button
+                  label="Delete"
+                  color="status-error"
+                  margin={{ left: '10px' }}
+                  onClick={() => {
+                    pdb.deleteSite(site._id)
+                  }}
+                />
+              )}
             </Box>
           </Box>
         </Form>

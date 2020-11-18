@@ -57,6 +57,13 @@ function App() {
                 />
               )}
             />
+            <Route
+              exact
+              path="/new"
+              component={(props) => (
+                <SiteForm {...props} addNew status={status} />
+              )}
+            />
           </LayoutSignedIn>
         </Grommet>
       </ThemeProvider>
