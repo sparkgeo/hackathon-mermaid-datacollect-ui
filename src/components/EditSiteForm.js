@@ -32,62 +32,66 @@ let DefaultIcon = leafetIcon({
 
 L.Marker.prototype.options.icon = DefaultIcon
 
-const initialState = {}
+const initialState = {
+  originalRecord: {},
+  currentValues: {
+    exposure: null,
+    reefType: null,
+    reefZone: null,
+    country: null,
+    notes: null,
+    name: null,
+    latitude: null,
+    longitude: null,
+  },
+  loading: true,
+  error: null,
+}
 
 function reducer(state, action) {
+  console.log('Reducer called ', action)
   switch (action.type) {
-    case 'set-form':
-      return form
     case 'reset-form':
       return initialState
+    case 'set-form':
+      return {
+        originalRecord: action.form,
+        currentValues: action.form,
+        loading: false,
+      }
     case 'update-form':
-      return { ...state, [action.element]: action.value }
+      return {
+        ...state,
+        currentValues: {
+          ...state.currentValues,
+          [action.element]: action.value,
+        },
+      }
+    case 'set-error':
+      return { ...state, error: action.error }
     default:
       throw new Error()
   }
 }
 
 const EditSiteForm = ({ record }) => {
-  const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
-  const [name, setName] = useState(null)
-  const [country, setCountry] = useState(null)
-  const [exposure, setExposure] = useState(null)
-  const [reefType, setReefType] = useState(null)
-  const [reefZone, setReefZone] = useState(null)
-  const [notes, setNotes] = useState(null)
-  const [originalRecord, setOriginalRecord] = useState({})
+  const [siteContent, dispatch] = useReducer(reducer, initialState)
+  const { loading, error, currentValues } = siteContent
 
-  const [formContent, dispatch] = useReducer(reducer, initialState)
   const setForm = (form) => dispatch({ type: 'set-form', form })
-  const updateForm = ({ element, value }) =>
+  const setFormElement = ({ element, value }) =>
     dispatch({ type: 'update-form', element, value })
 
   const [redirect, setRedirect] = useState(false)
 
   useEffect(() => {
     fetchSite(record).then((res) => {
-      const {
-        country,
-        exposure,
-        latitude,
-        longitude,
-        name,
-        notes,
-        reefType,
-        reefZone,
-      } = res
-
-      setCountry(reverseCountries[country])
-      setName(name)
-      setExposure(reverseReefExposures[exposure])
-      setReefType(reverseReefTypes[reefType])
-      setReefZone(reverseReefZones[reefZone])
-      setNotes(notes)
-      setOriginalRecord(res)
-      setMarkerPosition([latitude, longitude])
+      setForm(res)
     })
   }, [])
 
+  if (error) return <h1>error</h1>
+  if (loading) return <h1>loading</h1>
   if (redirect) return <Redirect to="/" />
 
   async function fetchSite(record) {
@@ -97,24 +101,24 @@ const EditSiteForm = ({ record }) => {
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData() {
-    DataStore.save(
-      Site.copyOf(originalRecord, (updated) => {
-        updated.exposure = reefExposures[exposure]
-        updated.reefType = reefTypes[reefType]
-        updated.reefZone = reefZones[reefZone]
-        updated.country = countries[country]
-        updated.notes = notes
-        updated.name = name
-        updated.latitude = Number(markerPosition[0])
-        updated.longitude = Number(markerPosition[1])
-      }),
-    )
-      .then((response) => {
-        console.log('It worked ', response)
-      })
-      .catch((e) => {
-        console.warn('oh noooo 👨‍🚒 ', e)
-      })
+    // DataStore.save(
+    //   Site.copyOf(originalRecord, (updated) => {
+    //     updated.exposure = reefExposures[exposure]
+    //     updated.reefType = reefTypes[reefType]
+    //     updated.reefZone = reefZones[reefZone]
+    //     updated.country = countries[country]
+    //     updated.notes = notes
+    //     updated.name = name
+    //     updated.latitude = Number(markerPosition[0])
+    //     updated.longitude = Number(markerPosition[1])
+    //   }),
+    // )
+    //   .then((response) => {
+    //     console.log('It worked ', response)
+    //   })
+    //   .catch((e) => {
+    //     console.warn('oh noooo 👨‍🚒 ', e)
+    //   })
   }
 
   return (
@@ -127,7 +131,7 @@ const EditSiteForm = ({ record }) => {
         direction="column"
         overflow={{ vertical: 'scroll' }}
       >
-        <Form onSubmit={submitData}>
+        <Form>
           <Box>
             <Box
               height="xxsmall"
@@ -136,11 +140,12 @@ const EditSiteForm = ({ record }) => {
               border={{ size: 'xsmall', color: 'dark-3', side: 'bottom' }}
             />
             <Box margin="small">
-              <FormField label="Name" name="name" required>
+              <FormField label="Name" required>
                 <TextInput
-                  name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={currentValues.name}
+                  onChange={(e) =>
+                    setFormElement({ element: 'name', value: e.target.value })
+                  }
                 />
               </FormField>
             </Box>
@@ -151,37 +156,35 @@ const EditSiteForm = ({ record }) => {
                 width="medium"
                 pad={{ horizontal: 'medium' }}
               >
-                <FormField label="Country" name="country" required>
+                <FormField label="Country" required>
                   <Select
                     options={Object.keys(countries)}
-                    name="country"
-                    value={country}
-                    onChange={({ option }) => setCountry(option)}
+                    value={reverseCountries[currentValues.country]}
+                    onChange={({ option }) => {
+                      setFormElement({
+                        element: 'country',
+                        value: countries[option],
+                      })
+                    }}
                   />
                 </FormField>
 
-                <FormField label="Latitude" name="latitude" required>
+                <FormField label="Latitude" required>
                   <TextInput
-                    value={markerPosition[0]}
-                    name="latitude"
+                    value={siteContent.currentValues.latitude}
                     type="number"
-                    onChange={(e) =>
-                      setMarkerPosition([e.target.value, markerPosition[1]])
-                    }
+                    disabled
                   />
                 </FormField>
                 <Text size="small" color="dark-4">
                   Decimal Degrees
                 </Text>
                 <br />
-                <FormField label="Longitude" name="longitude" required>
+                <FormField label="Longitude" required>
                   <TextInput
-                    value={markerPosition[1]}
-                    name="longitude"
+                    value={siteContent.currentValues.longitude}
                     type="number"
-                    onChange={(e) =>
-                      setMarkerPosition([markerPosition[0], e.target.value])
-                    }
+                    disabled
                   />
                 </FormField>
                 <Text size="small" color="dark-4">
@@ -191,53 +194,83 @@ const EditSiteForm = ({ record }) => {
               </Box>
               <Box width="fill" height="fill">
                 <MapContainer
-                  center={markerPosition}
+                  center={[currentValues.latitude, currentValues.longitude]}
                   zoom={4}
                   scrollWheelZoom
                   style={{ width: '800px', height: '400px' }}
                 >
                   <MapContent
-                    markerPosition={markerPosition}
-                    setMarkerPosition={setMarkerPosition}
+                    markerPosition={[
+                      currentValues.latitude,
+                      currentValues.longitude,
+                    ]}
+                    setMarkerPosition={([latitude, longitude]) => {
+                      console.log(
+                        'Set marker position called',
+                        latitude,
+                        longitude,
+                      )
+                      setFormElement({
+                        element: 'latitude',
+                        value: Number(latitude),
+                      })
+                      setFormElement({
+                        element: 'longitude',
+                        value: Number(longitude),
+                      })
+                    }}
                   />
                 </MapContainer>
               </Box>
             </Box>
             <Box margin="small">
-              <FormField label="Exposure" name="exposure" required>
+              <FormField label="Exposure" required>
                 <Select
                   options={Object.keys(reefExposures)}
-                  name="exposure"
-                  value={exposure}
-                  onChange={({ option }) => setExposure(option)}
+                  value={reverseReefExposures[currentValues.exposure]}
+                  onChange={({ option }) => {
+                    setFormElement({
+                      element: 'exposure',
+                      value: reefExposures[option],
+                    })
+                  }}
                 />
               </FormField>
-              <FormField label="Reef Type" name="reefType" required>
+              <FormField label="Reef Type" required>
                 <Select
                   options={Object.keys(reefTypes)}
-                  name="reefType"
-                  value={reefType}
-                  onChange={({ option }) => setReefType(option)}
+                  value={reverseReefTypes[currentValues.reefType]}
+                  onChange={({ option }) => {
+                    setFormElement({
+                      element: 'reefType',
+                      value: reefTypes[option],
+                    })
+                  }}
                 />
               </FormField>
-              <FormField label="Reef Zone" name="reefZone" required>
+              <FormField label="Reef Zone" required>
                 <Select
                   options={Object.keys(reefZones)}
-                  name="reefZone"
-                  value={reefZone}
-                  onChange={({ option }) => setReefZone(option)}
+                  value={reverseReefZones[currentValues.reefZone]}
+                  onChange={({ option }) => {
+                    setFormElement({
+                      element: 'reefZone',
+                      value: reefZones[option],
+                    })
+                  }}
                 />
               </FormField>
             </Box>
             <hr />
             <Box margin="small">
-              <FormField label="Notes" name="notes">
+              <FormField label="Notes">
                 <TextArea
                   id="text-area"
                   placeholder="placeholder"
-                  name="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  value={currentValues.notes}
+                  onChange={(e) =>
+                    setFormElement({ element: 'notes', value: e.target.value })
+                  }
                 />
               </FormField>
             </Box>
