@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import {
@@ -14,10 +14,15 @@ import {
 import { DataStore } from '@aws-amplify/datastore'
 import { MapContainer } from 'react-leaflet'
 import L, { icon as leafetIcon } from 'leaflet'
+import { Redirect } from 'react-router-dom'
 
 import MapContent from './MapContent'
 
-import countries from '../lib/countries'
+import { countries, reverseCountries } from '../lib/countries'
+import { reefTypes, reverseReefTypes } from '../lib/reefTypes'
+import { reefZones, reverseReefZones } from '../lib/reefZones'
+import { reefExposures, reverseReefExposures } from '../lib/reefExposures'
+
 import { Site } from '../models'
 
 let DefaultIcon = leafetIcon({
@@ -27,49 +32,22 @@ let DefaultIcon = leafetIcon({
 
 L.Marker.prototype.options.icon = DefaultIcon
 
-const reefTypes = {
-  atoll: '16a0a961-df6d-42a5-86b8-bc30f87bab42',
-  barrier: '2b99cdf4-9566-4e60-8700-4ec3b9c7e322',
-  fringing: '19534716-b138-49b1-bbd8-420df9243413',
-  lagoon: 'dc3aa6d3-2795-42bb-9771-39fbcdd3029d',
-  patch: '7085ee02-2a2e-4b42-b61e-18a78f1b8d03',
+const initialState = {}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'set-form':
+      return form
+    case 'reset-form':
+      return initialState
+    case 'update-form':
+      return { ...state, [action.element]: action.value }
+    default:
+      throw new Error()
+  }
 }
 
-const reefExposures = {
-  ['very sheltered']: 'baa54e1d-4263-4273-80f5-35812304b592',
-  ['sheltered']: '051c7545-eea8-48f6-bc82-3ef66bfdfe75',
-  ['semi-exposed']: '85b26198-4e3b-459c-868c-4e0706828cce',
-  ['exposed']: '997c6cb3-c5e5-4df6-9cfa-5814a58a7b9e',
-}
-
-const reefZones = {
-  ['back reef']: '06ea17cd-5d1d-46ae-a654-64901e2a9f96',
-  crest: '49c85161-99ee-4bc3-b6c4-09b5810da0a8',
-  ['fore reef']: '0e5ac2d0-d1cc-4f04-a696-f6d3db2b9ca8',
-  pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
-}
-
-const reverseReefZones = {}
-Object.entries(reefZones).forEach(([key, value]) => {
-  reverseReefZones[value] = key
-})
-
-const reverseCountries = {}
-Object.entries(countries).forEach(([key, value]) => {
-  reverseCountries[value] = key
-})
-
-const reverseReefTypes = {}
-Object.entries(reefTypes).forEach(([key, value]) => {
-  reverseReefTypes[value] = key
-})
-
-const reverseReefExposures = {}
-Object.entries(reefExposures).forEach(([key, value]) => {
-  reverseReefExposures[value] = key
-})
-
-const EditForm = ({ record }) => {
+const EditSiteForm = ({ record }) => {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
   const [name, setName] = useState(null)
   const [country, setCountry] = useState(null)
@@ -78,6 +56,13 @@ const EditForm = ({ record }) => {
   const [reefZone, setReefZone] = useState(null)
   const [notes, setNotes] = useState(null)
   const [originalRecord, setOriginalRecord] = useState({})
+
+  const [formContent, dispatch] = useReducer(reducer, initialState)
+  const setForm = (form) => dispatch({ type: 'set-form', form })
+  const updateForm = ({ element, value }) =>
+    dispatch({ type: 'update-form', element, value })
+
+  const [redirect, setRedirect] = useState(false)
 
   useEffect(() => {
     fetchSite(record).then((res) => {
@@ -102,6 +87,8 @@ const EditForm = ({ record }) => {
       setMarkerPosition([latitude, longitude])
     })
   }, [])
+
+  if (redirect) return <Redirect to="/" />
 
   async function fetchSite(record) {
     const site = await DataStore.query(Site, record)
@@ -255,7 +242,12 @@ const EditForm = ({ record }) => {
               </FormField>
             </Box>
             <Box pad={{ vertical: 'small' }} width="small" margin="small">
-              <Button label="Save" color="status-ok" type="submit" primary />
+              <Button
+                label="Finish Session"
+                color="status-ok"
+                secondary
+                onClick={() => setRedirect(true)}
+              />
             </Box>
           </Box>
         </Form>
@@ -264,4 +256,4 @@ const EditForm = ({ record }) => {
   )
 }
 
-export default EditForm
+export default EditSiteForm

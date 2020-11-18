@@ -16,6 +16,7 @@ import {
 import { Edit, DocumentText as View, Trash as Delete } from 'grommet-icons'
 
 import { deleteRecord, clearLocalData } from '../lib/api'
+import { reverseCountries } from '../lib/countries'
 
 /**
  * Table that loads on the homepage
@@ -125,7 +126,9 @@ function TableSites(props) {
                   <TableCell scope="row">
                     <strong>{i.name}</strong>
                   </TableCell>
-                  <TableCell>{i.country}</TableCell>
+                  <TableCell>
+                    {reverseCountries[i.country] ?? 'unknown'}
+                  </TableCell>
                   <TableCell>Coconut</TableCell>
                   <TableCell>Coconut</TableCell>
                   <TableCell>

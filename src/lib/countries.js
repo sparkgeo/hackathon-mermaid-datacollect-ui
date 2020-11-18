@@ -1,4 +1,4 @@
-export default {
+export const countries = {
   Afghanistan: '7fcb8835-8015-4c22-808a-f9326c4a6e3a',
   'Åland Islands': '2821c511-2d9d-4c69-bbbe-67923b88cda4',
   Albania: '282e4ef6-d961-4214-a17d-61d96ae0b32b',
@@ -255,3 +255,10 @@ export default {
   Zambia: '85a0dd13-864f-437f-a7df-1be11b4a5d66',
   Zimbabwe: 'c2fc7ffc-0143-44ac-b0d9-b40aaa1612ad',
 }
+
+export const reverseCountries = {}
+Object.entries(countries).forEach(([key, value]) => {
+  reverseCountries[value] = key
+})
+
+export default countries
