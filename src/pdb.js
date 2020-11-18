@@ -3,7 +3,7 @@ import PouchDB from 'pouchdb'
 const host =
   'Couch-Ec2Se-9MCN7MODIJHE-3c33f59f32c743f7.elb.us-west-2.amazonaws.com'
 const localhost = 'localhost'
-const remoteCouch = `http://admin:password@${host}:5984/mermaid_sites`
+const remoteCouch = `http://admin:password@${localhost}:5984/mermaid_sites`
 
 export default class PBD {
   constructor() {
