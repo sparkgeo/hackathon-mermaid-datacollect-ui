@@ -13,12 +13,6 @@ class SiteService {
       timeout: false,
       retry: true,
     })
-    // this.clientDb
-    //   .changes({
-    //     since: 'now',
-    //     live: true,
-    //   })
-    //   .on('change', () => console.log('changes'))
   }
   newSite = (site) => {
     const siteWithIdIfNecessary = {
@@ -28,7 +22,9 @@ class SiteService {
     return this.clientDb.put(siteWithIdIfNecessary)
   }
 
-  getSites = () => {}
+  getSites = () => {
+    return this.clientDb.allDocs({ include_docs: true, descending: true })
+  }
 }
 
 export default SiteService

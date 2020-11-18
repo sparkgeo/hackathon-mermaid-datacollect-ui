@@ -6,21 +6,15 @@ const SiteList = ({ siteService }) => {
 
   useEffect(() => {
     const getAllSites = () => {
-      console.log('get all sites')
-      siteService.clientDb.allDocs(
-        { include_docs: true, descending: true },
-        (err, doc) => {
-          console.log(err, doc)
-          setSites(doc.rows)
-        },
-      )
+      siteService.getSites().then((response) => {
+        setSites(response.rows)
+      })
     }
-
     getAllSites()
     siteService.clientDb
       .changes({ since: 'now', live: true })
       .on('change', getAllSites)
-  }, [siteService.clientDb])
+  }, [siteService])
 
   return (
     <Column>
