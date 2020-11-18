@@ -25,7 +25,7 @@ export default function HomePage() {
         const sites = await DataStore.query(Site, Predicates.ALL, {
           // page: 0,
           // limit: 15,
-        })
+        }).catch((e) => setError(e))
         setLoading(false)
         setRecords(sites)
       }
