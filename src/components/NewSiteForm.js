@@ -20,6 +20,7 @@ import {
   useMapEvents,
 } from 'react-leaflet'
 import L, { icon as leafletIcon } from 'leaflet'
+import { Redirect } from 'react-router-dom'
 
 import { createRecord } from '../lib/api'
 
@@ -59,6 +60,7 @@ const reefZones = {
 
 function NewSiteForm() {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
+  const [redirect, setRedirect] = useState(false)
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
@@ -70,11 +72,14 @@ function NewSiteForm() {
     createRecord(formContent)
       .then((response) => {
         console.log('It worked ', response)
+        setRedirect(true)
       })
       .catch((e) => {
         console.warn('oh noooo 👨‍🚒 ', e)
       })
   }
+
+  if (redirect) return <Redirect to="/" />
 
   return (
     <>
