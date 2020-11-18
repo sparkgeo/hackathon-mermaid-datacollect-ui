@@ -6,6 +6,7 @@
     "grommet": "^2.14.0",
     "grommet-icons": "^4.4.0",
     "leaflet": "^1.7.1",
+    "pouchdb": "^7.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-leaflet": "^3.0.2",
@@ -21,7 +22,6 @@
     "lint:fix": "eslint './src/**/*.js' --fix",
     "plop": "plop",
     "prettier": "prettier --write ./src/**/*.js "
-
   },
   "browserslist": {
     "production": [
