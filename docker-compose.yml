@@ -16,6 +16,13 @@ services:
   #   environment:
   #     - CHOKIDAR_USEPOLLING=true
 
+  webapp1:
+    image: nginx
+    ports:
+        - 3001:80
+    volumes:
+        - "$PWD/build:/usr/share/nginx/html:ro"
+
   webapp2:
     image: nginx
     ports:
