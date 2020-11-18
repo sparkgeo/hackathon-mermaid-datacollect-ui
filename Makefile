@@ -27,10 +27,12 @@ logs:
 	docker-compose logs -f webapp
 
 fresh_install: kill
+	npm install
 	make build
+	make start
 	sleep 10
 	make cors
-	make start
+	open http://localhost:3001/
 
 # build-prod:
 # 	docker-compose -f docker-compose.prod.yml build
