@@ -13,7 +13,6 @@ import 'leaflet/dist/leaflet.css'
 import LayoutSignedIn from './layouts/LayoutSignedIn'
 import theme from './theme'
 import './App.css'
-import SiteForm from './components/SiteForm'
 import Router from './routes/___Routes'
 
 function App() {

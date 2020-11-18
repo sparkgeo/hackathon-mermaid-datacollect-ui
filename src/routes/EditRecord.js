@@ -1,12 +1,11 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import EditForm from '../components/EditForm'
+import EditSiteForm from '../components/EditSiteForm'
 
 const EditRecordPage = () => {
   const { record } = useParams()
-  
-  return <EditForm record={record} />
+
+  return <EditSiteForm record={record} />
 }
 
 export default EditRecordPage
-

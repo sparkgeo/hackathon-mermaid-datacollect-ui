@@ -57,7 +57,7 @@ const reefZones = {
   pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
 }
 
-function SiteForm() {
+function NewSiteForm() {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
 
   // ! This is where can carry out actions based on the data in the form.
@@ -178,4 +178,4 @@ function SiteForm() {
   )
 }
 
-export default SiteForm
+export default NewSiteForm
