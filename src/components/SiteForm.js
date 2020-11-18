@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Redirect, useParams } from 'react-router-dom'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import { marker } from 'leaflet'
@@ -24,7 +25,12 @@ import {
 import Breadcrumbs from './Breadcrumbs'
 import MapContent from './MapContent'
 
+import PDB from '../pdb'
+import convertToName from '../helpers/convertToName'
 import countries from '../lib/countries'
+import reef_types from '../lib/reef_types'
+import reef_zones from '../lib/reef_zones'
+import reef_exposures from '../lib/reef_exposures'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -33,43 +39,59 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon
 
-const reefTypes = {
-  atoll: '16a0a961-df6d-42a5-86b8-bc30f87bab42',
-  barrier: '2b99cdf4-9566-4e60-8700-4ec3b9c7e322',
-  fringing: '19534716-b138-49b1-bbd8-420df9243413',
-  lagoon: 'dc3aa6d3-2795-42bb-9771-39fbcdd3029d',
-  patch: '7085ee02-2a2e-4b42-b61e-18a78f1b8d03',
-}
-
-const reefExposures = {
-  ['very sheltered']: 'baa54e1d-4263-4273-80f5-35812304b592',
-  ['sheltered']: '051c7545-eea8-48f6-bc82-3ef66bfdfe75',
-  ['semi-exposed']: '85b26198-4e3b-459c-868c-4e0706828cce',
-  ['exposed']: '997c6cb3-c5e5-4df6-9cfa-5814a58a7b9e',
-}
-
-const reefZones = {
-  ['back reef']: '06ea17cd-5d1d-46ae-a654-64901e2a9f96',
-  crest: '49c85161-99ee-4bc3-b6c4-09b5810da0a8',
-  ['fore reef']: '0e5ac2d0-d1cc-4f04-a696-f6d3db2b9ca8',
-  pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
-}
-
-function SiteForm() {
+function SiteForm({ site, addNew, status }) {
+  const pdb = new PDB()
+  const { id } = useParams()
+  const [redirectTarget, setRedirectTarget] = useState(null)
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
+  const [siteName, setSiteName] = useState('')
+  const [siteCountry, setSiteCountry] = useState('')
+  const [reefExposure, setReefExposure] = useState('')
+  const [reefType, setReefType] = useState('')
+  const [reefZone, setReefZone] = useState('')
+  const [siteNotes, setSiteNotes] = useState('')
+
+  useEffect(() => {
+    async function fetchSite() {
+      const siteView = await pdb.getSite(id)
+      if (siteView.name) setSiteName(siteView.name)
+      if (siteView.country)
+        setSiteCountry(convertToName(siteView.country, countries))
+      if (siteView.reef_exposure)
+        setReefExposure(convertToName(siteView.reef_exposure, reef_exposures))
+      if (siteView.reef_type)
+        setReefType(convertToName(siteView.reef_type, reef_types))
+      if (siteView.reef_zone)
+        setReefZone(convertToName(siteView.reef_zone, reef_zones))
+      if (siteView.notes) setSiteNotes(siteView.notes)
+    }
+
+    if (id) fetchSite()
+  }, [id])
 
   // ! This is where can carry out actions based on the data in the form.
   function submitData({ value: formContent }) {
-    formContent.reefType = reefTypes[formContent.reefType]
-    formContent.exposure = reefExposures[formContent.exposure]
-    formContent.reefZone = reefZones[formContent.reefZone]
     formContent.country = countries[formContent.country]
-
-    console.log('Submit triggered. Data : ', formContent)
+    formContent.reef_type = reef_types[formContent.reef_type]
+    formContent.reef_exposure = reef_exposures[formContent.reef_exposure]
+    formContent.reef_zone = reef_zones[formContent.reef_zone]
+    if (addNew) {
+      pdb.addNewSite(formContent, setRedirectTarget)
+    } else {
+      console.log('Submit triggered. Data : ', formContent)
+      pdb.saveSite(site._id, formContent)
+    }
   }
 
+  const handleNameChange = (event) => setSiteName(event.target.value)
+  const handleNotesChange = (event) => setSiteNotes(event.target.value)
+
+  if (redirectTarget) return <Redirect to={`/sites/${redirectTarget}`} />
+
+  if (status === 'loading') return <Box>Loading</Box>
+
   return (
-    <>
+    <Box>
       <Box
         direction="row"
         pad={{ horizontal: 'small' }}
@@ -77,7 +99,7 @@ function SiteForm() {
         height="xsmall"
         border={{ bottom: 'xsmall' }}
       >
-        <Breadcrumbs />
+        <Breadcrumbs siteName={siteName} />
       </Box>
       <Box
         margin="small"
@@ -97,7 +119,11 @@ function SiteForm() {
             />
             <Box margin="small">
               <FormField label="Name" name="name" required>
-                <TextInput name="name" />
+                <TextInput
+                  name="name"
+                  value={siteName}
+                  onChange={handleNameChange}
+                />
               </FormField>
             </Box>
             <Box direction="row">
@@ -108,9 +134,15 @@ function SiteForm() {
                 pad={{ horizontal: 'medium' }}
               >
                 <FormField label="Country" name="country" required>
-                  <Select options={Object.keys(countries)} name="country" />
+                  <Select
+                    options={Object.keys(countries)}
+                    name="country"
+                    value={siteCountry}
+                    onChange={({ option }) => {
+                      setSiteCountry(option)
+                    }}
+                  />
                 </FormField>
-
                 <FormField label="Latitude" name="lat" required>
                   <TextInput value={markerPosition[0]} name="lat" />
                 </FormField>
@@ -141,14 +173,35 @@ function SiteForm() {
               </Box>
             </Box>
             <Box margin="small">
-              <FormField label="Exposure" name="exposure" required>
-                <Select options={Object.keys(reefExposures)} name="exposure" />
+              <FormField label="Exposure" name="reef_exposure" required>
+                <Select
+                  options={Object.keys(reef_exposures)}
+                  name="reef_exposure"
+                  value={reefExposure}
+                  onChange={({ option }) => {
+                    setReefExposure(option)
+                  }}
+                />
               </FormField>
-              <FormField label="Reef Type" name="reefType" required>
-                <Select options={Object.keys(reefTypes)} name="reefType" />
+              <FormField label="Reef Type" name="reef_type" required>
+                <Select
+                  options={Object.keys(reef_types)}
+                  name="reef_type"
+                  value={reefType}
+                  onChange={({ option }) => {
+                    setReefType(option)
+                  }}
+                />
               </FormField>
-              <FormField label="Reef Zone" name="reefZone" required>
-                <Select options={Object.keys(reefZones)} name="reefZone" />
+              <FormField label="Reef Zone" name="reef_zone" required>
+                <Select
+                  options={Object.keys(reef_zones)}
+                  name="reef_zone"
+                  value={reefZone}
+                  onChange={({ option }) => {
+                    setReefZone(option)
+                  }}
+                />
               </FormField>
             </Box>
             <hr />
@@ -158,16 +211,34 @@ function SiteForm() {
                   id="text-area"
                   placeholder="placeholder"
                   name="notes"
+                  value={siteNotes}
+                  onChange={handleNotesChange}
                 />
               </FormField>
             </Box>
-            <Box pad={{ vertical: 'small' }} width="small" margin="small">
+            <Box
+              pad={{ vertical: 'small' }}
+              width="small"
+              margin="small"
+              direction="row"
+              alignContent="between"
+            >
               <Button label="Save" color="status-ok" type="submit" primary />
+              {!addNew && (
+                <Button
+                  label="Delete"
+                  color="status-error"
+                  margin={{ left: '10px' }}
+                  onClick={() => {
+                    pdb.deleteSite(site._id)
+                  }}
+                />
+              )}
             </Box>
           </Box>
         </Form>
       </Box>
-    </>
+    </Box>
   )
 }
 
