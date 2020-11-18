@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
-import { Hub } from '@aws-amplify/core'
-import { DataStore, Predicates } from '@aws-amplify/datastore'
+import { DataStore } from '@aws-amplify/datastore'
 import { Site } from '../models'
-
 import { retrieveAllRecords } from '../lib/api'
+
 import TableSites from '../components/TableSites'
 
 export default function HomePage() {
@@ -14,28 +13,24 @@ export default function HomePage() {
 
   useEffect(() => {
     // Create listener that will stop observing the model once the sync process is done
-    const removeListener = Hub.listen('datastore', async (capsule) => {
-      const {
-        payload: { event, data },
-      } = capsule
 
-      console.log('DataStore event', event, data)
-
-      if (event === 'ready') {
-        const sites = await DataStore.query(Site, Predicates.ALL, {
-          // page: 0,
-          // limit: 15,
-        }).catch((e) => setError(e))
+    retrieveAllRecords()
+      .then((records) => {
+        setRecords(records)
         setLoading(false)
-        setRecords(sites)
-      }
-    })
+      })
+      .catch((e) => setError(e))
 
     // Start the DataStore, this kicks-off the sync process.
     DataStore.start()
 
+    const subscription = DataStore.observe(Site).subscribe(() => {
+      DataStore.query(Site).then((records) => setRecords(records))
+    })
+
     return () => {
-      removeListener()
+      removeMainListener()
+      subscription.unsubscribe()
     }
   }, [])
 

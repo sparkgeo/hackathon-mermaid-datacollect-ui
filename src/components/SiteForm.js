@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import { marker } from 'leaflet'
 import {
   Box,
   Button,
@@ -21,6 +20,8 @@ import {
   useMapEvents,
 } from 'react-leaflet'
 import L, { icon as leafletIcon } from 'leaflet'
+
+import { createRecord } from '../lib/api'
 
 import MapContent from './MapContent'
 
@@ -66,7 +67,7 @@ function SiteForm() {
     formContent.reefZone = reefZones[formContent.reefZone]
     formContent.country = countries[formContent.country]
 
-    DataStore.save(new Site(formContent))
+    createRecord(formContent)
       .then((response) => {
         console.log('It worked ', response)
       })
