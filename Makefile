@@ -18,7 +18,7 @@ kill:
 	rm -fr build
 
 cors: 
-	npm run cors
+	docker-compose exec webapp sh -c "npm run cors"
 
 logs:
 	docker-compose logs -f webapp
