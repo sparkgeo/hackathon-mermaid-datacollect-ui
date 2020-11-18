@@ -1,6 +1,7 @@
 import React from 'react'
 import { Footer, Heading, Header, Main, Box } from 'grommet'
 import { Menu } from 'grommet-icons'
+import { Row } from '../components/commonUI'
 
 function LayoutSignedIn({ children }) {
   return (
@@ -22,7 +23,9 @@ function LayoutSignedIn({ children }) {
           </Box>
         </Box>
       </Header>
-      <Main fill>{children}</Main>
+      <Main fill>
+        <Row>{children}</Row>
+      </Main>
       <Footer background="dark-1">(footer)</Footer>
     </>
   )

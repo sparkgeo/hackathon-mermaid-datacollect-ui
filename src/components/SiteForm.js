@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import * as L from 'leaflet'
@@ -12,15 +12,12 @@ import {
   TextInput,
   Select,
 } from 'grommet'
-import PouchDB from 'pouchdb'
 
 import { MapContainer } from 'react-leaflet'
 
-import Breadcrumbs from './Breadcrumbs'
 import MapContent from './MapContent'
 
 import countries from '../lib/countries'
-import SiteService from '../services/siteService'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -51,12 +48,7 @@ const reefZones = {
   pinnacle: 'bc188a4f-76ae-4701-a021-26297efc9a92',
 }
 
-function SiteForm() {
-  const siteService = useRef()
-
-  useEffect(() => {
-    siteService.current = new SiteService()
-  }, [])
+function SiteForm({ siteService }) {
   const [markerPosition, setMarkerPosition] = useState([-12.477, 160.307])
 
   // ! This is where can carry out actions based on the data in the form.
@@ -65,7 +57,7 @@ function SiteForm() {
     formContent.exposure = reefExposures[formContent.exposure]
     formContent.reefZone = reefZones[formContent.reefZone]
     formContent.country = countries[formContent.country]
-    siteService.current
+    siteService
       .newSite(formContent)
       .then((response) => console.log('success', response))
       .catch((err) => {
@@ -75,15 +67,6 @@ function SiteForm() {
 
   return (
     <>
-      <Box
-        direction="row"
-        pad={{ horizontal: 'small' }}
-        justify="between"
-        height="xsmall"
-        border={{ bottom: 'xsmall' }}
-      >
-        <Breadcrumbs />
-      </Box>
       <Box
         margin="small"
         border={{ size: 'xsmall', color: 'dark-3' }}
