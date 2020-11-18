@@ -7,6 +7,9 @@ export const Column = styled.div`
   display: flex;
   flex-direction: column;
 `
+export const ColumnPadded = styled(Column)`
+  padding: 10px;
+`
 
 export const Table = styled('table')`
   table-layout: fixed;
