@@ -3,11 +3,8 @@
 # https://mherman.org/blog/dockerizing-a-react-app/
 # https://dev.to/igmrrf/docker-react-exited-with-code-0-398n
 
-install:
-	npm i
-
 build:
-	npm run build
+	docker-compose build
 
 start:
 	docker-compose up -d 
@@ -27,7 +24,6 @@ logs:
 	docker-compose logs -f webapp
 
 fresh_install: kill
-	npm install
 	make build
 	make start
 	sleep 10
