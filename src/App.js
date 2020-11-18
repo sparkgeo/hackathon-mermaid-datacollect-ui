@@ -26,6 +26,7 @@ function App() {
   useEffect(() => {
     async function fetchSites() {
       const sites = await pdb.getAllSites()
+      console.log('Sites fetched: ', sites)
       setSites(sites)
       setStatus('')
     }
@@ -54,6 +55,13 @@ function App() {
                   site={sites[props.match.params.id]}
                   status={status}
                 />
+              )}
+            />
+            <Route
+              exact
+              path="/new"
+              component={(props) => (
+                <SiteForm {...props} addNew status={status} />
               )}
             />
           </LayoutSignedIn>
