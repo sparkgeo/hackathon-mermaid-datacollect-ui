@@ -32,6 +32,7 @@ class SiteService {
       const locationPoint = turf.point(location)
       const sitePoint = turf.point([site.lat, site.lng])
       return (
+        // I made this distance bigger than current mermaid, just for demo purposes
         turf.distance(locationPoint, sitePoint, { units: 'meters' }) < 10000
       )
     }
