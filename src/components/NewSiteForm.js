@@ -117,7 +117,7 @@ function NewSiteForm() {
 
                 <FormField label="Latitude" name="latitude" required>
                   <TextInput
-                    value={markerPosition[0]}
+                    value={Number(markerPosition[0])}
                     name="latitude"
                     type="number"
                   />
@@ -128,7 +128,7 @@ function NewSiteForm() {
                 <br />
                 <FormField label="Longitude" name="longitude" required>
                   <TextInput
-                    value={markerPosition[1]}
+                    value={Number(markerPosition[1])}
                     name="longitude"
                     type="number"
                   />
