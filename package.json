@@ -5,6 +5,7 @@
   "dependencies": {
     "@aws-amplify/core": "^3.8.3",
     "@aws-amplify/datastore": "^2.7.3",
+    "debouncer": "^1.1.2",
     "grommet": "^2.14.0",
     "grommet-icons": "^4.4.0",
     "leaflet": "^1.7.1",

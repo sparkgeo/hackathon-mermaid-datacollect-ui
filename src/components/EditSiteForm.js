@@ -49,7 +49,6 @@ const initialState = {
 }
 
 function reducer(state, action) {
-  console.log('Reducer called ', action)
   switch (action.type) {
     case 'reset-form':
       return initialState
@@ -69,6 +68,8 @@ function reducer(state, action) {
       }
     case 'set-error':
       return { ...state, error: action.error }
+    case 'set-loading':
+      return { ...state, loading: action.status }
     default:
       throw new Error()
   }
@@ -76,49 +77,64 @@ function reducer(state, action) {
 
 const EditSiteForm = ({ record }) => {
   const [siteContent, dispatch] = useReducer(reducer, initialState)
-  const { loading, error, currentValues } = siteContent
-
-  const setForm = (form) => dispatch({ type: 'set-form', form })
-  const setFormElement = ({ element, value }) =>
-    dispatch({ type: 'update-form', element, value })
-
-  const [redirect, setRedirect] = useState(false)
-
-  useEffect(() => {
-    fetchSite(record).then((res) => {
-      setForm(res)
-    })
-  }, [])
-
-  if (error) return <h1>error</h1>
-  if (loading) return <h1>loading</h1>
-  if (redirect) return <Redirect to="/" />
+  const { loading, error, currentValues, originalRecord } = siteContent
+  const setLoading = (status) => dispatch({ type: 'set-loading', status })
+  const setData = (form) => dispatch({ type: 'set-form', form })
 
   async function fetchSite(record) {
     const site = await DataStore.query(Site, record)
     return site
   }
 
+  const setFormElement = ({ element, value }) =>
+    dispatch({ type: 'update-form', element, value })
+
+  const [redirect, setRedirect] = useState(false)
+
+  // Fetch data on initial load
+  useEffect(() => {
+    fetchSite(record).then((res) => {
+      setData(res)
+      setLoading(false)
+    })
+  }, [])
+
+  // Make subscription for when site is changed in front of user's eyes
+  useEffect(() => {
+    const subscription = DataStore.observe(Site).subscribe(() => {
+      DataStore.query(Site, record).then((record) => setData(record))
+    })
+
+    return () => {
+      removeMainListener()
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  if (error) return <h1>error</h1>
+  if (loading) return <h1>loading</h1>
+  if (redirect) return <Redirect to="/" />
+
   // ! This is where can carry out actions based on the data in the form.
   function submitData() {
-    // DataStore.save(
-    //   Site.copyOf(originalRecord, (updated) => {
-    //     updated.exposure = reefExposures[exposure]
-    //     updated.reefType = reefTypes[reefType]
-    //     updated.reefZone = reefZones[reefZone]
-    //     updated.country = countries[country]
-    //     updated.notes = notes
-    //     updated.name = name
-    //     updated.latitude = Number(markerPosition[0])
-    //     updated.longitude = Number(markerPosition[1])
-    //   }),
-    // )
-    //   .then((response) => {
-    //     console.log('It worked ', response)
-    //   })
-    //   .catch((e) => {
-    //     console.warn('oh noooo 👨‍🚒 ', e)
-    //   })
+    DataStore.save(
+      Site.copyOf(originalRecord, (updated) => {
+        updated.exposure = currentValues.exposure
+        updated.reefType = currentValues.reefType
+        updated.reefZone = currentValues.reefZone
+        updated.country = currentValues.country
+        updated.notes = currentValues.notes
+        updated.name = currentValues.name
+        updated.latitude = currentValues.latitude
+        updated.longitude = currentValues.longitude
+      }),
+    )
+      .then((response) => {
+        console.log('It worked ', response)
+      })
+      .catch((e) => {
+        console.warn('oh noooo 👨‍🚒 ', e)
+      })
   }
 
   return (
@@ -146,6 +162,7 @@ const EditSiteForm = ({ record }) => {
                   onChange={(e) =>
                     setFormElement({ element: 'name', value: e.target.value })
                   }
+                  onBlur={submitData}
                 />
               </FormField>
             </Box>
@@ -165,6 +182,7 @@ const EditSiteForm = ({ record }) => {
                         element: 'country',
                         value: countries[option],
                       })
+                      submitData()
                     }}
                   />
                 </FormField>
@@ -205,11 +223,6 @@ const EditSiteForm = ({ record }) => {
                       currentValues.longitude,
                     ]}
                     setMarkerPosition={([latitude, longitude]) => {
-                      console.log(
-                        'Set marker position called',
-                        latitude,
-                        longitude,
-                      )
                       setFormElement({
                         element: 'latitude',
                         value: Number(latitude),
@@ -218,6 +231,7 @@ const EditSiteForm = ({ record }) => {
                         element: 'longitude',
                         value: Number(longitude),
                       })
+                      submitData()
                     }}
                   />
                 </MapContainer>
@@ -233,6 +247,7 @@ const EditSiteForm = ({ record }) => {
                       element: 'exposure',
                       value: reefExposures[option],
                     })
+                    submitData()
                   }}
                 />
               </FormField>
@@ -245,6 +260,7 @@ const EditSiteForm = ({ record }) => {
                       element: 'reefType',
                       value: reefTypes[option],
                     })
+                    submitData()
                   }}
                 />
               </FormField>
@@ -257,6 +273,7 @@ const EditSiteForm = ({ record }) => {
                       element: 'reefZone',
                       value: reefZones[option],
                     })
+                    submitData()
                   }}
                 />
               </FormField>
@@ -271,6 +288,7 @@ const EditSiteForm = ({ record }) => {
                   onChange={(e) =>
                     setFormElement({ element: 'notes', value: e.target.value })
                   }
+                  onBlur={submitData}
                 />
               </FormField>
             </Box>

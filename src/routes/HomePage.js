@@ -25,7 +25,9 @@ export default function HomePage() {
     DataStore.start()
 
     const subscription = DataStore.observe(Site).subscribe(() => {
-      DataStore.query(Site).then((records) => setRecords(records))
+      DataStore.query(Site).then((records) => {
+        setRecords(records)
+      })
     })
 
     return () => {
