@@ -1,7 +1,21 @@
 version: '3.7'
 
-services:
+networks:
+  mermaid_backend:
+    name: mermaid_backend
+  mermaid_frontend:
+    name: mermaid_frontend
 
+volumes:
+  couch_data:
+  pg_data:
+  mermaid_etl_status_schema:
+  mermaid_etl_status_couchdb: 
+
+services:
+# -----------------------------------------------------------------
+# FRONTEND
+# -----------------------------------------------------------------
   amplify-app:
     container_name: amplify-app
     tty: true
@@ -13,6 +27,8 @@ services:
       - '/app/node_modules'
     ports:
       - 3001:3000
+    networks:
+      - mermaid_frontend
     environment:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_API_MODE=amplify
@@ -31,20 +47,84 @@ services:
       - '/app/node_modules'
     ports:
       - 3002:3000
+    networks:
+      - mermaid_frontend
     environment:
       - CHOKIDAR_USEPOLLING=true
       - COUCHDB_HOST=http://couchdb:5984
 
+# -----------------------------------------------------------------
+# BACKEND
+# -----------------------------------------------------------------
   couchdb:
     container_name: couchdb
     image: couchdb:3.0
-    ports:
-        - 5984:5984
     volumes:
-        - couch_data:/opt/couchdb/data
+      - couch_data:/opt/couchdb/data
+    ports:
+      - 5984:5984
+    networks:
+      - mermaid_frontend
+      - mermaid_backend
     environment:
       - COUCHDB_USER=$COUCHDB_USER
       - COUCHDB_PASSWORD=$COUCHDB_PASSWORD
 
-volumes:
-    couch_data:
+  api_db:
+    container_name: online_db
+    image: kartoza/postgis:13.0
+    volumes:
+      - pg_data:/var/lib/postgresql
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+    networks:
+      - mermaid_backend
+  
+  api_db_migration_monitor:
+    container_name: api_db_migration_monitor
+    build:
+      context: ./api_db_migration_monitor
+    depends_on:
+      - api_db
+    volumes:
+      - mermaid_etl_status_schema:/status/schema/
+
+  couchdb_available_monitor:
+    container_name: couchdb_available_monitor
+    build:
+      context: ./couchdb_available_monitor
+    depends_on:
+      - couchdb
+    volumes:
+      - mermaid_etl_status_couchdb:/status/couchdb/
+
+  api_db_etl:
+    container_name: api_db_etl
+    build:
+      context: ./api_db_etl
+    depends_on:
+      - api_db
+    volumes:
+      - mermaid_etl_status_schema:/status/schema
+      - mermaid_etl_status_couchdb:/status/couchdb/
+      - ./api_db_etl/app:/app
+    networks:
+      - mermaid_backend
+    env_file: 
+      - .env
+    ports:
+      - 8080:8080
+
+  api_db_pgadmin:
+    container_name: api_db_pgadmin
+    image: dpage/pgadmin4:4.25
+    depends_on:
+      - api_db
+    ports:
+      - 5050:5050
+    env_file: 
+      - .env
+    networks:
+      - mermaid_backend

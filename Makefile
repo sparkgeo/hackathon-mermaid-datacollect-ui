@@ -1,5 +1,9 @@
 .PHONY: build
 
+# -----------------------------------------------------------------
+# FRONTEND
+# -----------------------------------------------------------------
+
 # https://mherman.org/blog/dockerizing-a-react-app/
 # https://dev.to/igmrrf/docker-react-exited-with-code-0-398n
 
@@ -27,8 +31,9 @@ fresh_install: kill
 	make build
 	make start
 	sleep 10
+	make setup_db
 	make cors
-	open http://localhost:3001/
+	# open http://localhost:3001/
 
 # build-prod:
 # 	docker-compose -f docker-compose.prod.yml build
@@ -38,3 +43,38 @@ fresh_install: kill
 
 # stop-prod:
 # 	docker-compose -f docker-compose.prod.yml stop
+
+
+# -----------------------------------------------------------------
+# BACKEND
+# -----------------------------------------------------------------
+
+SHELL=/bin/bash
+ETL_CONTAINER_NAME=api_db_etl
+PGADMIN_CONTAINER_NAME=api_db_pgadmin
+API_DB_MIGRATION_MONITOR_CONTAINER_NAME=api_db_migration_monitor
+COUCHDB_AVAILABLE_MONITOR_CONTAINER_NAME=couchdb_available_monitor
+
+setup_db:
+	# docker-compose up -d
+	docker-compose logs -f $(COUCHDB_AVAILABLE_MONITOR_CONTAINER_NAME)
+	@echo "### Don't worry about duplicate errors if you have already created this couch database"
+	# make populate_couch
+	docker-compose logs -f $(API_DB_MIGRATION_MONITOR_CONTAINER_NAME)
+	docker cp api_db_pgadmin/pgadmin4-servers.json $(PGADMIN_CONTAINER_NAME):/tmp/pgadmin4-servers.json
+	docker exec -it $(PGADMIN_CONTAINER_NAME) /bin/sh -c "python setup.py --load-servers /tmp/pgadmin4-servers.json --user admin"
+
+psql:
+	docker exec -it online_db /bin/bash -c "PGPASSWORD=${POSTGRES_PASS} psql -U postgres -h localhost mermaid"
+
+api:
+	open http://localhost:8080/docs
+
+generate-migration:
+	docker-compose exec $(ETL_CONTAINER_NAME) alembic -c /app/migrations/alembic.ini revision --autogenerate
+
+new-migration:
+	docker-compose exec $(ETL_CONTAINER_NAME) alembic -c /app/migrations/alembic.ini revision
+
+apply-migration:
+	docker-compose exec $(ETL_CONTAINER_NAME) alembic -c /app/migrations/alembic.ini upgrade head
