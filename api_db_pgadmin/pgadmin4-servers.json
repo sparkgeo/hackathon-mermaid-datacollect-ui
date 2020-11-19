@@ -3,7 +3,7 @@
         "1": {
             "Name": "Mermaid ETL",
             "Group": "Servers",
-            "Host": "api_db",
+            "Host": "postgresdb",
             "Port": 5432,
             "MaintenanceDB": "postgres",
             "Username": "postgres",
