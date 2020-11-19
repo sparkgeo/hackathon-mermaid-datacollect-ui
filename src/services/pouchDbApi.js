@@ -2,9 +2,11 @@ import PouchDB from 'pouchdb'
 import { v4 as uuidv4 } from 'uuid';
 import { BehaviorSubject } from 'rxjs';
 
-var db = new PouchDB('mermaid_sites');
-var host = 'localhost'
-var remoteCouch = `http://admin:password@${host}:5984/mermaid_sites`;
+var host = process.env.REACT_APP_COUCHDB_URL || 'not working'
+var dbname = process.env.REACT_APP_COUCHDB_DBNAME || 'mermaid'
+var remoteCouch = `${host}/${dbname}`;
+
+var db = new PouchDB(dbname);
 
 const _recs = new BehaviorSubject([])
 const _rec = new BehaviorSubject({}) //for edited records

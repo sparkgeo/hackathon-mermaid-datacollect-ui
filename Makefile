@@ -33,7 +33,25 @@ fresh_install: kill
 	sleep 10
 	make setup_db
 	make cors
-	# open http://localhost:3001/
+	make open_apps
+
+open_pouchapp:
+	open http://localhost:3001/
+
+open_amplifyapp:
+	open http://localhost:3002/
+
+open_couchadmin:
+	open http://localhost:5984/_utils/
+
+open_etlapi:
+	open http://localhost:8080/docs/
+
+open_pgadmin:
+	open http://localhost:5050/
+
+open_apps: open_pouchapp open_amplifyapp open_couchadmin open_etlapi open_pgadmin
+
 
 # build-prod:
 # 	docker-compose -f docker-compose.prod.yml build
@@ -50,31 +68,24 @@ fresh_install: kill
 # -----------------------------------------------------------------
 
 SHELL=/bin/bash
-ETL_CONTAINER_NAME=api_db_etl
-PGADMIN_CONTAINER_NAME=api_db_pgadmin
-API_DB_MIGRATION_MONITOR_CONTAINER_NAME=api_db_migration_monitor
-COUCHDB_AVAILABLE_MONITOR_CONTAINER_NAME=couchdb_available_monitor
 
 setup_db:
 	# docker-compose up -d
-	docker-compose logs -f $(COUCHDB_AVAILABLE_MONITOR_CONTAINER_NAME)
+	docker-compose logs -f couchdb_available_monitor
 	@echo "### Don't worry about duplicate errors if you have already created this couch database"
-	# make populate_couch
-	docker-compose logs -f $(API_DB_MIGRATION_MONITOR_CONTAINER_NAME)
-	docker cp api_db_pgadmin/pgadmin4-servers.json $(PGADMIN_CONTAINER_NAME):/tmp/pgadmin4-servers.json
-	docker exec -it $(PGADMIN_CONTAINER_NAME) /bin/sh -c "python setup.py --load-servers /tmp/pgadmin4-servers.json --user admin"
+	curl -X PUT 'http://admin:password@localhost:5984/mermaid' -d '{"id":"mermaid","name":"mermaid"}'
+	docker-compose logs -f api_db_migration_monitor
+	docker cp api_db_pgadmin/pgadmin4-servers.json api_db_pgadmin:/tmp/pgadmin4-servers.json
+	docker exec -it api_db_pgadmin /bin/sh -c "python setup.py --load-servers /tmp/pgadmin4-servers.json --user admin"
 
 psql:
-	docker exec -it online_db /bin/bash -c "PGPASSWORD=${POSTGRES_PASS} psql -U postgres -h localhost mermaid"
-
-api:
-	open http://localhost:8080/docs
+	docker-compose exec -it postgresdb /bin/bash -c "PGPASSWORD=${POSTGRES_PASS} psql -U postgres -h localhost mermaid"
 
 generate-migration:
-	docker-compose exec $(ETL_CONTAINER_NAME) alembic -c /app/migrations/alembic.ini revision --autogenerate
+	docker-compose exec api_db_etl alembic -c /app/migrations/alembic.ini revision --autogenerate
 
 new-migration:
-	docker-compose exec $(ETL_CONTAINER_NAME) alembic -c /app/migrations/alembic.ini revision
+	docker-compose exec api_db_etl alembic -c /app/migrations/alembic.ini revision
 
 apply-migration:
-	docker-compose exec $(ETL_CONTAINER_NAME) alembic -c /app/migrations/alembic.ini upgrade head
+	docker-compose exec api_db_etl alembic -c /app/migrations/alembic.ini upgrade head
