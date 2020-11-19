@@ -18,15 +18,12 @@ function getSites(rows) {
   return sites
 }
 
-db.changes({
-  since: 'now',
-  live: true
-}).on('change', (evt) => {
-  console.log('change evt: ', evt)
-  // db.replicate.to(remoteCouch)
-});
-
-
+// db.changes({
+//   since: 'now',
+//   live: true
+// }).on('change', (evt) => {
+//   console.log('change evt: ', evt)
+// });
 
 export const startPouchdbServer = () => {
   console.log('startPouchdbServer')
@@ -35,33 +32,27 @@ export const startPouchdbServer = () => {
   db.sync(remoteCouch, {live: true})
     .on('change', function (info) {
       console.log('change', info);
-      // showTodos();
     })
     .on('paused', function () {
       console.log('paused');
-      // console.warn(err);
     })
     .on('active', function (msg) {
       console.log('active', msg);
     })
     .on('denied', function (err) {
       console.log('denied', err);
-      // console.error(err);
     })
     .on('complete', function (info) {
       console.log("complete", info)
-      // showTodos();
     })
     .on('error', function (err) {
       console.log('error', err);
-      // syncError();
     });
 }
 
 export const retrieveAllPouchdbRecords = async () => {
   console.log('retrieveAllPouchdbRecords')
   let docs = await db.allDocs({include_docs: true})
-  // console.log('docs.rows', docs.rows)
   return getSites(docs.rows)
 
 }
@@ -84,17 +75,14 @@ export const updatePouchdbRecordFields = async ({ originalRecord, fields }) => {
 
   Object.keys(fields).forEach((field) => (originalRecord[field] = fields[field]))
   
-  // console.log('updatedRecord', originalRecord);
   await db.put(originalRecord).then((r) => {
     _rec.next(r)
-    // db.sync(remoteCouch, {live: true})
   })
 }
 
 export const fetchPouchdbRecord = async (id) => {
   var obj = await db.get(id)
   obj.id = obj._id
-  console.log('obj', obj)
   return obj
 }
 
@@ -104,8 +92,7 @@ export const clearLocalPouchdbData = async () => await db.destroy()
 export const allRecordPouchdbSubscription = ({ cb }) => {
   console.log('allRecordPouchdbSubscription')
 
-  return _recs.subscribe(async (newData) => {
-    // console.log('newData', newData)
+  return _recs.subscribe(async () => {
       const records = await retrieveAllPouchdbRecords()
       cb(records)
   })
@@ -114,8 +101,7 @@ export const allRecordPouchdbSubscription = ({ cb }) => {
 export const singleRecordPouchdbSubscription = ({ cb, id }) => {
   console.log('singleRecordPouchdbSubscription')
 
-  return _rec.subscribe(async (newData) => {
-    // console.log('newData single', newData)
+  return _rec.subscribe(async () => {
       const record = await fetchPouchdbRecord(id)
       cb(record)
   })
