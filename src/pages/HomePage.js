@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import {
   retrieveAllRecords,
   allRecordSubscription,
-  startServer,
+  // startServer,
 } from '../lib/api'
 import { Heading } from 'grommet'
 import TableSites from '../components/TableSites'
@@ -24,7 +24,7 @@ export default function HomePage() {
       .catch((e) => setError(e))
 
     // Start the DataStore, this kicks-off the sync process.
-    startServer()
+    // startServer()
 
     const subscription = allRecordSubscription({ cb: setRecords }) || null
 
