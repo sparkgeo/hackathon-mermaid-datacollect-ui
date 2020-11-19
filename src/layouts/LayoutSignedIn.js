@@ -13,7 +13,7 @@ function LayoutSignedIn({ children }) {
       >
         <Box direction='row' gap='small'>
           <Heading level="4">mermaid</Heading>
-          <Text alignSelf='center' color='accent-1' size='small'>{process.env.REACT_APP_API_MODE === 'amplify' ? 'AMPLIFY' : ''}</Text>
+          <Text alignSelf='center' color='accent-1' size='small'>{process.env.REACT_APP_API_MODE === 'amplify' ? 'AMPLIFY' : 'POUCHDB'}</Text>
         </Box>
         <Box direction="row">
           <Box margin={{ right: 'small' }}>Projects</Box>
