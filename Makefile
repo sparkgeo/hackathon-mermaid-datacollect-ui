@@ -33,7 +33,25 @@ fresh_install: kill
 	sleep 10
 	make setup_db
 	make cors
-	# open http://localhost:3001/
+	make open_apps
+
+open_pouchapp:
+	open http://localhost:3001/
+
+open_amplifyapp:
+	open http://localhost:3002/
+
+open_couchadmin:
+	open http://localhost:5984/_utils/
+
+open_etlapi:
+	open http://localhost:8080/docs/
+
+open_pgadmin:
+	open http://localhost:5050/
+
+open_apps: open_pouchapp open_amplifyapp open_couchadmin open_etlapi open_pgadmin
+
 
 # build-prod:
 # 	docker-compose -f docker-compose.prod.yml build
@@ -62,9 +80,6 @@ setup_db:
 
 psql:
 	docker-compose exec -it postgresdb /bin/bash -c "PGPASSWORD=${POSTGRES_PASS} psql -U postgres -h localhost mermaid"
-
-api:
-	open http://localhost:8080/docs
 
 generate-migration:
 	docker-compose exec api_db_etl alembic -c /app/migrations/alembic.ini revision --autogenerate
