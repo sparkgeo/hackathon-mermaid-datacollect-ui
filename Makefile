@@ -21,7 +21,7 @@ cors:
 	docker-compose exec webapp sh -c "npm run cors"
 
 logs:
-	docker-compose logs -f webapp
+	docker-compose logs -f amplify-app pouchdb-app
 
 fresh_install: kill
 	make build

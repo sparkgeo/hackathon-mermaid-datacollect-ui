@@ -2,8 +2,8 @@ version: '3.7'
 
 services:
 
-  webapp:
-    container_name: webapp
+  amplify-app:
+    container_name: amplify-app
     tty: true
     build:
       context: .
@@ -15,6 +15,22 @@ services:
       - 3001:3000
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_MODE=amplify
+  
+  pouchdb-app:
+    container_name: pouchdb-app
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    ports:
+      - 3002:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - COUCHDB_HOST=http://couchdb:5984
 
   couchdb:
     container_name: couchdb
@@ -23,8 +39,9 @@ services:
         - 5984:5984
     volumes:
         - couch_data:/opt/couchdb/data
-    env_file:
-        - .env_sample
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
 
 volumes:
     couch_data:
