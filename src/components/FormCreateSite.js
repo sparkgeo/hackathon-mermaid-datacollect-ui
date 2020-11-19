@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import {
@@ -11,14 +11,7 @@ import {
   TextInput,
   Select,
 } from 'grommet'
-import { DataStore } from '@aws-amplify/datastore'
-import {
-  MapContainer,
-  Marker,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from 'react-leaflet'
+import { MapContainer } from 'react-leaflet'
 import L, { icon as leafletIcon } from 'leaflet'
 import { Redirect } from 'react-router-dom'
 
@@ -30,7 +23,6 @@ import { countries } from '../lib/countries'
 import { reefTypes } from '../lib/reefTypes'
 import { reefZones } from '../lib/reefZones'
 import { reefExposures } from '../lib/reefExposures'
-import { Site } from '../models'
 
 let DefaultIcon = leafletIcon({
   iconUrl: icon,
@@ -76,7 +68,7 @@ function NewSiteForm() {
           <Box>
             <Box
               height="xxsmall"
-              width="xxlarge"
+              width="fill"
               background="light-4"
               border={{ size: 'xsmall', color: 'dark-3', side: 'bottom' }}
             />

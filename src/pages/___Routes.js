@@ -13,9 +13,9 @@ export default function Routes() {
       <Route path="/new">
         <CreateRecord />
       </Route>
-      <Route path="/record/:record" exact>
+      {/* <Route path="/record/:record" exact>
         view
-      </Route>
+      </Route> */}
       <Route path="/record/:record/edit">
         <EditRecord />
       </Route>

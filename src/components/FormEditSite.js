@@ -75,7 +75,7 @@ function reducer(state, action) {
   }
 }
 
-const EditSiteForm = ({ record }) => {
+const FormEditSite = ({ record }) => {
   const [siteContent, dispatch] = useReducer(reducer, initialState)
   const { loading, error, currentValues, originalRecord } = siteContent
   const setLoading = (status) => dispatch({ type: 'set-loading', status })
@@ -337,4 +337,4 @@ const EditSiteForm = ({ record }) => {
   )
 }
 
-export default EditSiteForm
+export default FormEditSite

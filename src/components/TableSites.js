@@ -90,9 +90,9 @@ function TableSites(props) {
                 <TableCell scope="col" border="bottom">
                   Edit
                 </TableCell>
-                <TableCell scope="col" border="bottom">
+                {/* <TableCell scope="col" border="bottom">
                   View
-                </TableCell>
+                </TableCell> */}
                 <TableCell scope="col" border="bottom">
                   Delete
                 </TableCell>
@@ -116,11 +116,11 @@ function TableSites(props) {
                       <Edit />
                     </Anchor>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Anchor href={`/record/${i.id}`}>
                       <View />
                     </Anchor>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Button
                       icon={<Delete />}

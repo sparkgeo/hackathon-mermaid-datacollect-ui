@@ -1,6 +1,6 @@
 import React from 'react'
-import NewSiteForm from '../components/NewSiteForm'
+import FormCreateSite from '../components/FormCreateSite'
 
 export default function CreateRecordPage() {
-  return <NewSiteForm />
+  return <FormCreateSite />
 }
