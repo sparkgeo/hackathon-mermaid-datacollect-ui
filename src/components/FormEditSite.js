@@ -67,6 +67,16 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                       fields: { name: currentValues.name },
                     })
                   }}
+                  onFocus={() => {
+                    updateRecordFields({
+                      originalRecord,
+                      fields: {
+                        siteStatus: [
+                          { user: 'Sparkgeo', field: 'name', time: Date.now() },
+                        ],
+                      },
+                    })
+                  }}
                 />
               </FormField>
             </Box>

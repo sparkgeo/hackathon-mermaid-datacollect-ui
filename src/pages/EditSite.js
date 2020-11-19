@@ -3,7 +3,21 @@ import { useParams } from 'react-router-dom'
 import FormEditSite from '../components/FormEditSite'
 import { Heading } from 'grommet'
 
-import { fetchRecord, singleRecordSubscription } from '../lib/api'
+import { DataStore } from '@aws-amplify/datastore'
+import { Site } from '../models'
+
+import {
+  fetchRecord,
+  // singleRecordSubscription
+} from '../lib/api'
+
+const singleRecordSubscription = ({ cb, id }) => {
+  return DataStore.observe(Site, id).subscribe(async (event) => {
+    console.log('Subscription event ', event)
+    const { element: record } = event
+    cb(record)
+  })
+}
 
 const initialState = {
   originalRecord: {},
