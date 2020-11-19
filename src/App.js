@@ -14,7 +14,11 @@ import theme from './theme'
 import './App.css'
 import Router from './pages/___Routes'
 
+import { startServer } from './lib/api'
+
 function App() {
+  startServer()
+
   return (
     <>
       <ThemeProvider theme={theme}>

@@ -1,3 +1,10 @@
+type Status {
+  id: ID!
+  user: String!
+  field: String!
+  time: Int!
+}
+
 type Site @model {
   id: ID!
   name: String!
@@ -9,4 +16,5 @@ type Site @model {
   reefZone: String!
   notes: String
   createdAt: String
+  siteStatus: [Status]
 }

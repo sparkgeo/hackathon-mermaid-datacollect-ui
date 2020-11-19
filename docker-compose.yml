@@ -1,9 +1,23 @@
 version: '3.7'
 
-services:
+networks:
+  mermaid_backend:
+    name: mermaid_backend
+  mermaid_frontend:
+    name: mermaid_frontend
 
-  webapp:
-    container_name: webapp
+volumes:
+  couch_data:
+  pg_data:
+  mermaid_etl_status_schema:
+  mermaid_etl_status_couchdb: 
+
+services:
+# -----------------------------------------------------------------
+# FRONTEND
+# -----------------------------------------------------------------
+  amplify-app:
+    container_name: amplify-app
     tty: true
     build:
       context: .
@@ -13,18 +27,117 @@ services:
       - '/app/node_modules'
     ports:
       - 3001:3000
+    networks:
+      - mermaid_frontend
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_MODE=amplify
+      - REACT_APP_AMPLIFY_REGION=us-west-2
+      - REACT_APP_AMPLIFY_EP=https://ucoyjvcf2jdv5mnfpqoctjyihq.appsync-api.us-west-2.amazonaws.com/graphql
+      - REACT_APP_AMPLIFY_KEY=$REACT_APP_AMPLIFY_KEY
+  
+  pouchdb-app:
+    container_name: pouchdb-app
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    ports:
+      - 3002:3000
+    networks:
+      - mermaid_frontend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_COUCHDB_URL=http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984
+      - REACT_APP_COUCHDB_DBNAME=mermaid
 
+# -----------------------------------------------------------------
+# BACKEND
+# -----------------------------------------------------------------
   couchdb:
     container_name: couchdb
     image: couchdb:3.0
-    ports:
-        - 5984:5984
     volumes:
-        - couch_data:/opt/couchdb/data
-    env_file:
-        - .env_sample
+      - couch_data:/opt/couchdb/data
+    ports:
+      - 5984:5984
+    networks:
+      - mermaid_frontend
+      - mermaid_backend
+    environment:
+      - COUCHDB_USER=$COUCHDB_USER
+      - COUCHDB_PASSWORD=$COUCHDB_PASSWORD
 
-volumes:
-    couch_data:
+  postgresdb:
+    container_name: postgresdb
+    image: kartoza/postgis:13.0
+    volumes:
+      - pg_data:/var/lib/postgresql
+    environment:
+      - POSTGRES_PASS=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DBNAME=mermaid
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+    ports:
+      - 5432:5432
+    networks:
+      - mermaid_backend
+  
+  api_db_migration_monitor:
+    container_name: api_db_migration_monitor
+    build:
+      context: ./api_db_migration_monitor
+    depends_on:
+      - postgresdb
+    volumes:
+      - mermaid_etl_status_schema:/status/schema/
+
+  couchdb_available_monitor:
+    container_name: couchdb_available_monitor
+    build:
+      context: ./couchdb_available_monitor
+    depends_on:
+      - couchdb
+    volumes:
+      - mermaid_etl_status_couchdb:/status/couchdb/
+
+  api_db_etl:
+    container_name: api_db_etl
+    build:
+      context: ./api_db_etl
+    depends_on:
+      - couchdb
+      - postgresdb
+    volumes:
+      - mermaid_etl_status_schema:/status/schema
+      - mermaid_etl_status_couchdb:/status/couchdb/
+      - ./api_db_etl/app:/app
+    networks:
+      - mermaid_backend
+    environment:
+      - COUCHDB_URL=http://$COUCHDB_USER:$COUCHDB_PASSWORD@couchdb:5984
+      - COUCHDB_DBNAME=mermaid
+      - POSTGRES_HOST=postgresdb
+      - POSTGRES_PASS=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DBNAME=mermaid
+    ports:
+      - 8080:8080
+
+  api_db_pgadmin:
+    container_name: api_db_pgadmin
+    image: dpage/pgadmin4:4.25
+    depends_on:
+      - postgresdb
+    ports:
+      - 5050:5050
+    environment: 
+      - PGADMIN_DEFAULT_EMAIL=admin
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_ADDRESS=api_db_pgadmin
+      - PGADMIN_LISTEN_PORT=5050
+    networks:
+      - mermaid_backend
