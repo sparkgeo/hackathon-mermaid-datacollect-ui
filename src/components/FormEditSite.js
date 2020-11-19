@@ -11,7 +11,6 @@ import {
   TextInput,
   Select,
 } from 'grommet'
-import { DataStore } from '@aws-amplify/datastore'
 import { MapContainer } from 'react-leaflet'
 import L, { icon as leafetIcon } from 'leaflet'
 import { Redirect } from 'react-router-dom'
@@ -22,8 +21,7 @@ import { countries, reverseCountries } from '../lib/countries'
 import { reefTypes, reverseReefTypes } from '../lib/reefTypes'
 import { reefZones, reverseReefZones } from '../lib/reefZones'
 import { reefExposures, reverseReefExposures } from '../lib/reefExposures'
-
-import { Site } from '../models'
+import { updateRecordFields } from '../lib/api'
 
 let DefaultIcon = leafetIcon({
   iconUrl: icon,
@@ -37,14 +35,6 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
   const [redirect, setRedirect] = useState(false)
 
   if (redirect) return <Redirect to="/" />
-
-  function submitFields(fields) {
-    DataStore.save(
-      Site.copyOf(originalRecord, (updated) => {
-        Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
-      }),
-    )
-  }
 
   return (
     <>
@@ -72,7 +62,10 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                     setFormElement({ element: 'name', value: e.target.value })
                   }
                   onBlur={() => {
-                    submitFields({ name: currentValues.name })
+                    updateRecordFields({
+                      originalRecord,
+                      fields: { name: currentValues.name },
+                    })
                   }}
                 />
               </FormField>
@@ -94,8 +87,11 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                         value: countries[option],
                       })
                       setTimeout(
-                        submitFields({
-                          country: countries[option],
+                        updateRecordFields({
+                          originalRecord,
+                          fields: {
+                            country: countries[option],
+                          },
                         }),
                         50,
                       )
@@ -147,9 +143,12 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                       //   element: 'longitude',
                       //   value: Number(longitude),
                       // })
-                      submitFields({
-                        latitude: Number(latitude),
-                        longitude: Number(longitude),
+                      updateRecordFields({
+                        originalRecord,
+                        fields: {
+                          latitude: Number(latitude),
+                          longitude: Number(longitude),
+                        },
                       })
                     }}
                   />
@@ -167,7 +166,11 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                       value: reefExposures[option],
                     })
                     setTimeout(
-                      () => submitFields({ exposure: reefExposures[option] }),
+                      () =>
+                        updateRecordFields({
+                          originalRecord,
+                          fields: { exposure: reefExposures[option] },
+                        }),
                       50,
                     )
                   }}
@@ -183,7 +186,11 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                       value: reefTypes[option],
                     })
                     setTimeout(
-                      () => submitFields({ reefType: reefTypes[option] }),
+                      () =>
+                        updateRecordFields({
+                          originalRecord,
+                          fields: { reefType: reefTypes[option] },
+                        }),
                       50,
                     )
                   }}
@@ -199,7 +206,11 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                       value: reefZones[option],
                     })
                     setTimeout(
-                      () => submitFields({ reefZone: reefZones[option] }),
+                      () =>
+                        updateRecordFields({
+                          fields: { reefZone: reefZones[option] },
+                          originalRecord,
+                        }),
                       50,
                     )
                   }}
@@ -218,7 +229,11 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                   }
                   onBlur={() =>
                     setTimeout(
-                      () => submitFields({ notes: currentValues.notes }),
+                      () =>
+                        updateRecordFields({
+                          fields: { notes: currentValues.notes },
+                          originalRecord,
+                        }),
                       50,
                     )
                   }

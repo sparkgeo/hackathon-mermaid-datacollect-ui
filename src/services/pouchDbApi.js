@@ -47,8 +47,8 @@ export const createPouchdbRecord = async (data) => {
   await db.put(data)
 }
 
-export const editPouchdbRecord = async (originalRecord, fields) => {
-  console.log('editPouchdbRecord', originalRecord, fields)
+export const updatePouchdbRecordFields = async (originalRecord, fields) => {
+  console.log('updatePouchdbRecordFields', originalRecord, fields)
   // DataStore.save(
   //   Site.copyOf(originalRecord, (updated) => {
   //     Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
