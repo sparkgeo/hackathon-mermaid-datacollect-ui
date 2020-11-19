@@ -77,10 +77,12 @@ const EditSitePage = () => {
       if (record) setForm(record)
     }
 
-    const subscription = singleRecordSubscription({ id: record, cb })
+    const subscription = singleRecordSubscription({ id: record, cb }) || null
 
     return () => {
-      subscription.unsubscribe()
+      if (subscription) {
+        subscription.unsubscribe()
+      }
     }
   }, [])
 

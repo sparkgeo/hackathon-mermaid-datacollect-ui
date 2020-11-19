@@ -6,6 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { BehaviorSubject } from 'rxjs';
 
 var db = new PouchDB('mermaid_sites');
+var host = 'localhost'
+var remoteCouch = `http://admin:password@${host}:5984/mermaid_sites`;
+
 const _recs = new BehaviorSubject([])
 
 function getSites(rows) {
@@ -24,6 +27,30 @@ export const startPouchdbServer = () => {
   //   since: 'now',
   //   live: true
   // }).on('change', retrieveAllPouchdbRecords);
+  db.sync(remoteCouch, {live: true})
+    .on('change', function (info) {
+      console.log('change', info);
+      // showTodos();
+    })
+    .on('paused', function () {
+      console.log('paused');
+      // console.warn(err);
+    })
+    .on('active', function (msg) {
+      console.log('active', msg);
+    })
+    .on('denied', function (err) {
+      console.log('denied', err);
+      // console.error(err);
+    })
+    .on('complete', function (info) {
+      console.log("complete", info)
+      // showTodos();
+    })
+    .on('error', function (err) {
+      console.log('error', err);
+      // syncError();
+    });
 }
 
 export const retrieveAllPouchdbRecords = async () => {
@@ -47,8 +74,33 @@ export const createPouchdbRecord = async (data) => {
   await db.put(data)
 }
 
-export const updatePouchdbRecordFields = async (originalRecord, fields) => {
-  console.log('updatePouchdbRecordFields', originalRecord, fields)
+export const updatePouchdbRecordFields = async ({ originalRecord, fields }) => {
+  console.log('updatePouchdbRecordFields', originalRecord)
+
+  for (const [key, value] of Object.entries(fields)) {
+    console.log(`${key}: ${value}`);
+  }
+
+  Object.keys(fields).forEach((field) => (originalRecord[field] = fields[field]))
+  
+  // .forEach(function(f) {
+  //   console.log(f)
+  // })
+  //   (field) => {
+  //     console.log(field)
+  //     // originalRecord[field] = fields[field]
+  //   }
+  // )
+  console.log('updatedRecord', originalRecord);
+  await db.get(originalRecord._id).then(function(doc) {
+    console.log('doc', doc);
+
+    return db.put(doc).then(function(r) {
+      _recs.next(r)
+    });
+  })
+  // await db.put(originalRecord)
+  // _recs.next(originalRecord)
   // DataStore.save(
   //   Site.copyOf(originalRecord, (updated) => {
   //     Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
