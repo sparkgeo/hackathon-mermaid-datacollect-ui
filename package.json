@@ -10,6 +10,7 @@
     "grommet": "^2.14.0",
     "grommet-icons": "^4.4.0",
     "leaflet": "^1.7.1",
+    "prettier": "^2.1.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
@@ -26,7 +27,8 @@
     "lint": "eslint './src/**/*.js'",
     "lint:fix": "eslint './src/**/*.js' --fix",
     "amplify-modelgen": "node amplify/scripts/amplify-modelgen.js",
-    "amplify-push": "node amplify/scripts/amplify-push.js"
+    "amplify-push": "node amplify/scripts/amplify-push.js",
+    "prettier": "prettier --write ./src/**/*.js "
   },
   "browserslist": {
     "production": [
