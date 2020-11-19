@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import {
   Anchor,
@@ -10,6 +10,7 @@ import {
   TableCell,
   Heading,
   Button,
+  ResponsiveContext,
 } from 'grommet'
 import { Edit, DocumentText as View, Trash as Delete } from 'grommet-icons'
 
@@ -23,6 +24,7 @@ import { reverseCountries } from '../lib/countries'
  *
  */
 function TableSites(props) {
+  const size = useContext(ResponsiveContext)
   const { sites } = props
   const [deleteConfirmModal, setDeleteConfirmModal] = useState(null)
   const [clearConfirmModal, setClearConfirmModal] = useState(false)
@@ -43,7 +45,13 @@ function TableSites(props) {
           executeAction={() => clearLocalData()}
         />
       )}
-      <Box direction="column">
+      <Box
+        direction="column"
+        margin={{
+          horizontal:
+            size === 'large' ? 'xlarge' : size === 'medium' ? 'small' : 0,
+        }}
+      >
         <Box
           width="fill"
           direction="row"
