@@ -31,7 +31,6 @@ export default function HomePage() {
     })
 
     return () => {
-      removeMainListener()
       subscription.unsubscribe()
     }
   }, [])

@@ -79,10 +79,13 @@ const EditSiteForm = ({ record }) => {
   const [siteContent, dispatch] = useReducer(reducer, initialState)
   const { loading, error, currentValues, originalRecord } = siteContent
   const setLoading = (status) => dispatch({ type: 'set-loading', status })
-  const setData = (form) => dispatch({ type: 'set-form', form })
+  const setForm = (form) => dispatch({ type: 'set-form', form })
 
   async function fetchSite(record) {
-    const site = await DataStore.query(Site, record)
+    console.log('Fetch site ', record)
+    const site = await DataStore.query(Site, record).catch((e) => {
+      throw Error(e)
+    })
     return site
   }
 
@@ -94,7 +97,7 @@ const EditSiteForm = ({ record }) => {
   // Fetch data on initial load
   useEffect(() => {
     fetchSite(record).then((res) => {
-      setData(res)
+      setForm(res)
       setLoading(false)
     })
   }, [])
@@ -102,11 +105,13 @@ const EditSiteForm = ({ record }) => {
   // Make subscription for when site is changed in front of user's eyes
   useEffect(() => {
     const subscription = DataStore.observe(Site).subscribe(() => {
-      DataStore.query(Site, record).then((record) => setData(record))
+      DataStore.query(Site, record).then((record) => {
+        console.log('Datastore subscription ', record)
+        if (record) setForm(record)
+      })
     })
 
     return () => {
-      removeMainListener()
       subscription.unsubscribe()
     }
   }, [])
@@ -130,11 +135,27 @@ const EditSiteForm = ({ record }) => {
       }),
     )
       .then((response) => {
-        console.log('It worked ', response)
+        console.log('Response to datastore save ', response)
       })
       .catch((e) => {
         console.warn('oh noooo 👨‍🚒 ', e)
       })
+  }
+
+  function submitFields(fields) {
+    DataStore.save(
+      Site.copyOf(originalRecord, (updated) => {
+        Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
+      }),
+    )
+  }
+
+  function submitField({ key, value }) {
+    DataStore.save(
+      Site.copyOf(originalRecord, (updated) => {
+        updated[key] = value
+      }),
+    )
   }
 
   return (
@@ -182,7 +203,13 @@ const EditSiteForm = ({ record }) => {
                         element: 'country',
                         value: countries[option],
                       })
-                      submitData()
+                      setTimeout(
+                        submitField({
+                          key: 'country',
+                          value: countries[option],
+                        }),
+                        250,
+                      )
                     }}
                   />
                 </FormField>
@@ -223,15 +250,18 @@ const EditSiteForm = ({ record }) => {
                       currentValues.longitude,
                     ]}
                     setMarkerPosition={([latitude, longitude]) => {
-                      setFormElement({
-                        element: 'latitude',
-                        value: Number(latitude),
+                      // setFormElement({
+                      //   element: 'latitude',
+                      //   value: Number(latitude),
+                      // })
+                      // setFormElement({
+                      //   element: 'longitude',
+                      //   value: Number(longitude),
+                      // })
+                      submitFields({
+                        latitude: Number(latitude),
+                        longitude: Number(longitude),
                       })
-                      setFormElement({
-                        element: 'longitude',
-                        value: Number(longitude),
-                      })
-                      submitData()
                     }}
                   />
                 </MapContainer>
