@@ -26,7 +26,8 @@ export const clearLocalAppsyncData = async () => await DataStore.clear()
 
 // Returns a fn that allows for the component to unsub
 export const allRecordAppsyncSubscription = ({ cb }) =>
-  DataStore.observe(Site).subscribe(() => {
+  DataStore.observe(Site).subscribe((event) => {
+    console.log('Subscription event ', event)
     DataStore.query(Site).then((records) => {
       console.log('CB ', cb)
       cb(records)
@@ -34,9 +35,18 @@ export const allRecordAppsyncSubscription = ({ cb }) =>
   })
 
 export const singleRecordAppsyncSubscription = ({ cb, id }) =>
-  DataStore.observe(Site, id).subscribe(() => {
+  DataStore.observe(Site, id).subscribe((event) => {
+    console.log('Subscription event ', event)
     DataStore.query(Site, id).then((record) => {
       console.log('CB ', cb)
       cb(record)
     })
   })
+
+export const updateAppsyncRecordFields = ({ originalRecord, fields }) => {
+  DataStore.save(
+    Site.copyOf(originalRecord, (updated) => {
+      Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
+    }),
+  )
+}

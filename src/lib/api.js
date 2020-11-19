@@ -7,6 +7,7 @@ import {
   clearLocalAppsyncData,
   allRecordAppsyncSubscription,
   singleRecordAppsyncSubscription,
+  updateAppsyncRecordFields,
 } from '../services/appSyncApi'
 
 let startServerFn
@@ -17,6 +18,7 @@ let fetchRecordFn
 let clearLocalDataFn
 let allRecordSubscriptionFn
 let singleRecordSubscriptionFn
+let updateRecordFieldsFn
 
 if (process.env.REACT_APP_API_MODE === 'amplify') {
   startServerFn = startAppsyncServer
@@ -27,6 +29,7 @@ if (process.env.REACT_APP_API_MODE === 'amplify') {
   clearLocalDataFn = clearLocalAppsyncData
   allRecordSubscriptionFn = allRecordAppsyncSubscription
   singleRecordSubscriptionFn = singleRecordAppsyncSubscription
+  updateRecordFieldsFn = updateAppsyncRecordFields
 } else {
   startServerFn = () => {
     throw Error('Not initialized')
@@ -52,6 +55,10 @@ if (process.env.REACT_APP_API_MODE === 'amplify') {
     throw Error('Not initialized')
   }
 
+  updateRecordFieldsFn = async () => {
+    throw Error('Not initialized')
+  }
+
   // Returns a fn that allows for the component to unsub
   allRecordSubscriptionFn = ({ cb }) => {
     throw Error('Not initialized')
@@ -70,3 +77,4 @@ export const fetchRecord = fetchRecordFn
 export const clearLocalData = clearLocalDataFn
 export const allRecordSubscription = allRecordSubscriptionFn
 export const singleRecordSubscription = singleRecordSubscriptionFn
+export const updateRecordFields = updateRecordFieldsFn

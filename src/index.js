@@ -2,10 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-
 import Amplify from '@aws-amplify/core'
-import config from './aws-exports'
-Amplify.configure(config)
+import awsConfig from './aws-exports'
+
+if (process.env.REACT_APP_API_MODE === 'amplify') Amplify.configure(awsConfig)
 
 ReactDOM.render(<App />, document.getElementById('root'))
 
