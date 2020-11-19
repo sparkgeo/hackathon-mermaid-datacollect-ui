@@ -1,8 +1,5 @@
-// import { DataStore } from '@aws-amplify/datastore'
-// import { Site } from '../models'
 import PouchDB from 'pouchdb'
 import { v4 as uuidv4 } from 'uuid';
-// import Observable from 'zen-observable-ts';
 import { BehaviorSubject } from 'rxjs';
 
 var db = new PouchDB('mermaid_sites');
@@ -10,6 +7,7 @@ var host = 'localhost'
 var remoteCouch = `http://admin:password@${host}:5984/mermaid_sites`;
 
 const _recs = new BehaviorSubject([])
+const _rec = new BehaviorSubject({}) //for edited records
 
 function getSites(rows) {
   let sites = []
@@ -77,37 +75,11 @@ export const createPouchdbRecord = async (data) => {
 export const updatePouchdbRecordFields = async ({ originalRecord, fields }) => {
   console.log('updatePouchdbRecordFields', originalRecord)
 
-  for (const [key, value] of Object.entries(fields)) {
-    console.log(`${key}: ${value}`);
-  }
-
   Object.keys(fields).forEach((field) => (originalRecord[field] = fields[field]))
   
-  // .forEach(function(f) {
-  //   console.log(f)
-  // })
-  //   (field) => {
-  //     console.log(field)
-  //     // originalRecord[field] = fields[field]
-  //   }
-  // )
-  console.log('updatedRecord', originalRecord);
-  await db.get(originalRecord._id).then(function(doc) {
-    console.log('doc', doc);
-
-    return db.put(doc).then(function(r) {
-      _recs.next(r)
-    });
-  })
-  // await db.put(originalRecord)
-  // _recs.next(originalRecord)
-  // DataStore.save(
-  //   Site.copyOf(originalRecord, (updated) => {
-  //     Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
-  //   }),
-  // )
+  // console.log('updatedRecord', originalRecord);
+  await db.put(originalRecord).then((r) => {_rec.next(r)})
 }
-
 
 export const fetchPouchdbRecord = async (id) => await db.get(id)
 
@@ -118,8 +90,7 @@ export const allRecordPouchdbSubscription = ({ cb }) => {
   console.log('allRecordPouchdbSubscription')
 
   return _recs.subscribe(async (newData) => {
-    console.log('newData', newData)
-    //   console.log('allRecordPouchdbSubscription: Subscription event ', event)
+    // console.log('newData', newData)
       const records = await retrieveAllPouchdbRecords()
       cb(records)
   })
@@ -127,4 +98,11 @@ export const allRecordPouchdbSubscription = ({ cb }) => {
 
 export const singleRecordPouchdbSubscription = ({ cb, id }) => {
   console.log('singleRecordPouchdbSubscription')
+
+  return _rec.subscribe(async (newData) => {
+    console.log('newData single', newData)
+      const record = await fetchPouchdbRecord(id)
+      cb(record)
+  })
+
 }
