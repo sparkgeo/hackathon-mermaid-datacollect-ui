@@ -15,21 +15,8 @@ _Part of the MERMAID Replugged project_
 ## Environment Variables
 
 Copy the following into a `.env` file (see `.env_sample`)
-```
-POSTGRES_HOST=api_db
-POSTGRES_DB=mermaid
-POSTGRES_PASS=postgres
-POSTGRES_USER=postgres
-POSTGRES_DBNAME=mermaid
-POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
-PGADMIN_DEFAULT_EMAIL=admin
-PGADMIN_DEFAULT_PASSWORD=admin
-PGADMIN_LISTEN_ADDRESS=api_db_pgadmin
-PGADMIN_LISTEN_PORT=5050
-COUCHDB_USER=admin
-COUCHDB_PASSWORD=password
-COUCHDB_URL=http://admin:password@couchdb:5984/
-```
+
+`cp .env_sample .env`
 
 ## Spin up local development
 

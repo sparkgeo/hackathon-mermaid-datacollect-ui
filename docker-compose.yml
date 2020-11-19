@@ -51,7 +51,8 @@ services:
       - mermaid_frontend
     environment:
       - CHOKIDAR_USEPOLLING=true
-      - COUCHDB_HOST=http://couchdb:5984
+      - COUCHDB_URL=http://$COUCHDB_USER:$COUCHDB_PASSWORD@couchdb:5984
+      - COUCHDB_DBNAME=mermaid
 
 # -----------------------------------------------------------------
 # BACKEND
@@ -70,13 +71,16 @@ services:
       - COUCHDB_USER=$COUCHDB_USER
       - COUCHDB_PASSWORD=$COUCHDB_PASSWORD
 
-  api_db:
-    container_name: online_db
+  postgresdb:
+    container_name: postgresdb
     image: kartoza/postgis:13.0
     volumes:
       - pg_data:/var/lib/postgresql
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_PASS=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DBNAME=mermaid
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
     ports:
       - 5432:5432
     networks:
@@ -87,7 +91,7 @@ services:
     build:
       context: ./api_db_migration_monitor
     depends_on:
-      - api_db
+      - postgresdb
     volumes:
       - mermaid_etl_status_schema:/status/schema/
 
@@ -105,15 +109,21 @@ services:
     build:
       context: ./api_db_etl
     depends_on:
-      - api_db
+      - couchdb
+      - postgresdb
     volumes:
       - mermaid_etl_status_schema:/status/schema
       - mermaid_etl_status_couchdb:/status/couchdb/
       - ./api_db_etl/app:/app
     networks:
       - mermaid_backend
-    env_file: 
-      - .env
+    environment:
+      - COUCHDB_URL=http://$COUCHDB_USER:$COUCHDB_PASSWORD@couchdb:5984
+      - COUCHDB_DBNAME=mermaid
+      - POSTGRES_HOST=postgresdb
+      - POSTGRES_PASS=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DBNAME=mermaid
     ports:
       - 8080:8080
 
@@ -121,10 +131,13 @@ services:
     container_name: api_db_pgadmin
     image: dpage/pgadmin4:4.25
     depends_on:
-      - api_db
+      - postgresdb
     ports:
       - 5050:5050
-    env_file: 
-      - .env
+    environment: 
+      - PGADMIN_DEFAULT_EMAIL=admin
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_ADDRESS=api_db_pgadmin
+      - PGADMIN_LISTEN_PORT=5050
     networks:
       - mermaid_backend
