@@ -73,12 +73,12 @@ function TableSites(props) {
                 <TableCell scope="col" border="bottom">
                   Country
                 </TableCell>
-                <TableCell scope="col" border="bottom">
+                {/* <TableCell scope="col" border="bottom">
                   Synced
                 </TableCell>
                 <TableCell scope="col" border="bottom">
                   Validated
-                </TableCell>
+                </TableCell> */}
                 <TableCell scope="col" border="bottom">
                   Edit
                 </TableCell>
@@ -101,8 +101,8 @@ function TableSites(props) {
                   <TableCell>
                     {reverseCountries[i.country] ?? 'unknown'}
                   </TableCell>
-                  <TableCell>Coconut</TableCell>
-                  <TableCell>Coconut</TableCell>
+                  {/* <TableCell>Coconut</TableCell>
+                  <TableCell>Coconut</TableCell> */}
                   <TableCell>
                     <Anchor href={`/record/${i.id}/edit`}>
                       <Edit />
