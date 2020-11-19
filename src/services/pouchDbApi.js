@@ -2,8 +2,8 @@ import PouchDB from 'pouchdb'
 import { v4 as uuidv4 } from 'uuid';
 import { BehaviorSubject } from 'rxjs';
 
-var host = process.env.COUCHDB_URL || 'localhost'
-var dbname = process.env.COUCHDB_DBNAME || 'mermaid'
+var host = process.env.REACT_APP_COUCHDB_URL || 'not working'
+var dbname = process.env.REACT_APP_COUCHDB_DBNAME || 'mermaid'
 var remoteCouch = `${host}/${dbname}`;
 
 var db = new PouchDB(dbname);

@@ -51,8 +51,8 @@ services:
       - mermaid_frontend
     environment:
       - CHOKIDAR_USEPOLLING=true
-      - COUCHDB_URL=http://$COUCHDB_USER:$COUCHDB_PASSWORD@couchdb:5984
-      - COUCHDB_DBNAME=mermaid
+      - REACT_APP_COUCHDB_URL=http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984
+      - REACT_APP_COUCHDB_DBNAME=mermaid
 
 # -----------------------------------------------------------------
 # BACKEND
