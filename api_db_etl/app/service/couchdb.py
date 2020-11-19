@@ -6,13 +6,17 @@ from app.settings import COUCHDB_URL, COUCHDB_DBNAME
 from app.service.document_management_error import DocumentManagementError
 
 couchserver = couchdb.Server(COUCHDB_URL)
-if COUCHDB_DBNAME in couchserver:
-    db = couchserver[COUCHDB_DBNAME]
-else:
-    raise ValueError(f"Configured CouchDB name ({COUCHDB_DBNAME}) does not exist")
 
+
+db = None
 
 def get_document_by_id(id: str):
+    global db
+    if not db:
+        if COUCHDB_DBNAME in couchserver:
+            db = couchserver[COUCHDB_DBNAME]
+        else:
+            raise ValueError(f"Configured CouchDB name ({COUCHDB_DBNAME}) does not exist")
     if id in db:
         return db[id]
     else:
