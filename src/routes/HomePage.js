@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
-import { DataStore } from '@aws-amplify/datastore'
-import { Site } from '../models'
-import { retrieveAllRecords } from '../lib/api'
+import {
+  retrieveAllRecords,
+  allRecordSubscription,
+  startServer,
+} from '../lib/api'
 
 import TableSites from '../components/TableSites'
 
@@ -22,13 +24,9 @@ export default function HomePage() {
       .catch((e) => setError(e))
 
     // Start the DataStore, this kicks-off the sync process.
-    DataStore.start()
+    startServer()
 
-    const subscription = DataStore.observe(Site).subscribe(() => {
-      DataStore.query(Site).then((records) => {
-        setRecords(records)
-      })
-    })
+    const subscription = allRecordSubscription({ cb: setRecords })
 
     return () => {
       subscription.unsubscribe()
