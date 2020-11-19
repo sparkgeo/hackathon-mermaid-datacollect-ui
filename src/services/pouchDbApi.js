@@ -18,13 +18,20 @@ function getSites(rows) {
   return sites
 }
 
+db.changes({
+  since: 'now',
+  live: true
+}).on('change', (evt) => {
+  console.log('change evt: ', evt)
+  // db.replicate.to(remoteCouch)
+});
+
+
+
 export const startPouchdbServer = () => {
   console.log('startPouchdbServer')
 
-  // db.changes({
-  //   since: 'now',
-  //   live: true
-  // }).on('change', retrieveAllPouchdbRecords);
+  
   db.sync(remoteCouch, {live: true})
     .on('change', function (info) {
       console.log('change', info);
@@ -78,10 +85,18 @@ export const updatePouchdbRecordFields = async ({ originalRecord, fields }) => {
   Object.keys(fields).forEach((field) => (originalRecord[field] = fields[field]))
   
   // console.log('updatedRecord', originalRecord);
-  await db.put(originalRecord).then((r) => {_rec.next(r)})
+  await db.put(originalRecord).then((r) => {
+    _rec.next(r)
+    // db.sync(remoteCouch, {live: true})
+  })
 }
 
-export const fetchPouchdbRecord = async (id) => await db.get(id)
+export const fetchPouchdbRecord = async (id) => {
+  var obj = await db.get(id)
+  obj.id = obj._id
+  console.log('obj', obj)
+  return obj
+}
 
 export const clearLocalPouchdbData = async () => await db.destroy()
 
@@ -100,7 +115,7 @@ export const singleRecordPouchdbSubscription = ({ cb, id }) => {
   console.log('singleRecordPouchdbSubscription')
 
   return _rec.subscribe(async (newData) => {
-    console.log('newData single', newData)
+    // console.log('newData single', newData)
       const record = await fetchPouchdbRecord(id)
       cb(record)
   })
