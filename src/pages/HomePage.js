@@ -27,7 +27,7 @@ export default function HomePage() {
     // Start the DataStore, this kicks-off the sync process.
     startServer()
 
-    const subscription = allRecordSubscription({ cb: setRecords })
+    const subscription = allRecordSubscription({ cb: setRecords }) || null
 
     return () => {
       if (subscription) {

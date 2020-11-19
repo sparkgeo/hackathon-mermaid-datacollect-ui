@@ -3,9 +3,10 @@
 import PouchDB from 'pouchdb'
 import { v4 as uuidv4 } from 'uuid';
 // import Observable from 'zen-observable-ts';
-import { Observable, from } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 var db = new PouchDB('mermaid_sites');
+const _recs = new BehaviorSubject([])
 
 function getSites(rows) {
   let sites = []
@@ -37,6 +38,7 @@ export const deletePouchdbRecord = async (id) => {
   console.log('deletePouchdbRecord', id)
   let site = await db.get(id)
   await db.remove(site);
+  _recs.next(null)
 }
 
 export const createPouchdbRecord = async (data) => {
@@ -44,6 +46,16 @@ export const createPouchdbRecord = async (data) => {
   data._id = uuidv4()
   await db.put(data)
 }
+
+export const editPouchdbRecord = async (originalRecord, fields) => {
+  console.log('editPouchdbRecord', originalRecord, fields)
+  // DataStore.save(
+  //   Site.copyOf(originalRecord, (updated) => {
+  //     Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
+  //   }),
+  // )
+}
+
 
 export const fetchPouchdbRecord = async (id) => await db.get(id)
 
@@ -53,42 +65,14 @@ export const clearLocalPouchdbData = async () => await db.destroy()
 export const allRecordPouchdbSubscription = ({ cb }) => {
   console.log('allRecordPouchdbSubscription')
 
-  const observable = from(retrieveAllPouchdbRecords())
-
-  // const observable = new Observable(subscriber => {
-  //   console.log('subscriber', subscriber)
-  //   retrieveAllPouchdbRecords().then((records) => {
-  //     records.forEach((rec) => {
-  //       subscriber.next(rec);
-  //     })
-  //     subscriber.complete();
-  //   })
-  // });
-
-  return observable.subscribe(async (event) => {
-    console.log('allRecordPouchdbSubscription: Subscription event ', event)
-    const records = await retrieveAllPouchdbRecords()
-    cb(records)
+  return _recs.subscribe(async (newData) => {
+    console.log('newData', newData)
+    //   console.log('allRecordPouchdbSubscription: Subscription event ', event)
+      const records = await retrieveAllPouchdbRecords()
+      cb(records)
   })
-
-  // let arrPromise = db.allDocs({include_docs: true})
-  // let observable = Observable.from(arrPromise)
-  
-  // observable.subscribe(() => {
-  //   arrPromise.then((records) => {
-  //     console.log('records ', records)
-  //     cb(records)
-  //   })
-  // })
-  
-
 }
 
 export const singleRecordPouchdbSubscription = ({ cb, id }) => {
   console.log('singleRecordPouchdbSubscription')
 }
-
-// db.changes({
-//   since: 'now',
-//   live: true
-// }).on('change', retrieveAllPouchdbRecords); 
