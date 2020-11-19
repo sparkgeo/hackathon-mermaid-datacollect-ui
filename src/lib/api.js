@@ -9,6 +9,17 @@ import {
   singleRecordAppsyncSubscription,
 } from '../services/appSyncApi'
 
+import {
+  startPouchdbServer,
+  retrieveAllPouchdbRecords,
+  deletePouchdbRecord,
+  createPouchdbRecord,
+  fetchPouchdbRecord,
+  clearLocalPouchdbData,
+  allRecordPouchdbSubscription,
+  singleRecordPouchdbSubscription,
+} from '../services/pouchDbApi'
+
 let startServerFn
 let retrieveAllRecordsFn
 let deleteRecordFn
@@ -28,38 +39,14 @@ if (process.env.REACT_APP_API_MODE === 'amplify') {
   allRecordSubscriptionFn = allRecordAppsyncSubscription
   singleRecordSubscriptionFn = singleRecordAppsyncSubscription
 } else {
-  startServerFn = () => {
-    throw Error('Not initialized')
-  }
-
-  retrieveAllRecordsFn = async () => {
-    throw Error('Not initialized')
-  }
-
-  deleteRecordFn = async (id) => {
-    throw Error('Not initialized')
-  }
-
-  createRecordFn = async (data) => {
-    throw Error('Not initialized')
-  }
-
-  fetchRecordFn = async (id) => {
-    throw Error('Not initialized')
-  }
-
-  clearLocalDataFn = async () => {
-    throw Error('Not initialized')
-  }
-
-  // Returns a fn that allows for the component to unsub
-  allRecordSubscriptionFn = ({ cb }) => {
-    throw Error('Not initialized')
-  }
-
-  singleRecordSubscriptionFn = ({ cb, id }) => {
-    throw Error('Not initialized')
-  }
+  startServerFn = startPouchdbServer
+  retrieveAllRecordsFn = retrieveAllPouchdbRecords
+  deleteRecordFn = deletePouchdbRecord
+  createRecordFn = createPouchdbRecord
+  fetchRecordFn = fetchPouchdbRecord
+  clearLocalDataFn = clearLocalPouchdbData
+  allRecordSubscriptionFn = allRecordPouchdbSubscription
+  singleRecordSubscriptionFn = singleRecordPouchdbSubscription
 }
 
 export const startServer = startServerFn
