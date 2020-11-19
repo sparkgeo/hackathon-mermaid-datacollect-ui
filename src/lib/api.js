@@ -15,6 +15,13 @@ export const createRecord = async (data) => {
   await DataStore.save(new Site(data))
 }
 
+export const fetchRecord = async (id) => {
+  const site = await DataStore.query(Site, id).catch((e) => {
+    throw Error(e)
+  })
+  return site
+}
+
 export const clearLocalData = async () => await DataStore.clear()
 
 // Returns a fn that allows for the component to unsub
@@ -23,5 +30,13 @@ export const allRecordSubscription = ({ cb }) =>
     DataStore.query(Site).then((records) => {
       console.log('CB ', cb)
       cb(records)
+    })
+  })
+
+export const singleRecordSubscription = ({ cb, id }) =>
+  DataStore.observe(Site, id).subscribe(() => {
+    DataStore.query(Site, id).then((record) => {
+      console.log('CB ', cb)
+      cb(record)
     })
   })

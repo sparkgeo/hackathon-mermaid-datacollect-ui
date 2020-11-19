@@ -1,8 +1,8 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import CreateRecord from './CreateRecord'
 import HomePage from './HomePage'
-import EditRecord from './EditRecord'
+import EditSite from './EditSite'
 
 export default function Routes() {
   return (
@@ -17,7 +17,7 @@ export default function Routes() {
         view
       </Route> */}
       <Route path="/record/:record/edit">
-        <EditRecord />
+        <EditSite />
       </Route>
     </Router>
   )

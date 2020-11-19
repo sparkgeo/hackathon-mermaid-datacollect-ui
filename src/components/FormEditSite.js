@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useState } from 'react'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import {
@@ -32,128 +32,16 @@ let DefaultIcon = leafetIcon({
 
 L.Marker.prototype.options.icon = DefaultIcon
 
-const initialState = {
-  originalRecord: {},
-  currentValues: {
-    exposure: null,
-    reefType: null,
-    reefZone: null,
-    country: null,
-    notes: null,
-    name: null,
-    latitude: null,
-    longitude: null,
-  },
-  loading: true,
-  error: null,
-}
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'reset-form':
-      return initialState
-    case 'set-form':
-      return {
-        originalRecord: action.form,
-        currentValues: action.form,
-        loading: false,
-      }
-    case 'update-form':
-      return {
-        ...state,
-        currentValues: {
-          ...state.currentValues,
-          [action.element]: action.value,
-        },
-      }
-    case 'set-error':
-      return { ...state, error: action.error }
-    case 'set-loading':
-      return { ...state, loading: action.status }
-    default:
-      throw new Error()
-  }
-}
-
-const FormEditSite = ({ record }) => {
-  const [siteContent, dispatch] = useReducer(reducer, initialState)
-  const { loading, error, currentValues, originalRecord } = siteContent
-  const setLoading = (status) => dispatch({ type: 'set-loading', status })
-  const setForm = (form) => dispatch({ type: 'set-form', form })
-
-  async function fetchSite(record) {
-    console.log('Fetch site ', record)
-    const site = await DataStore.query(Site, record).catch((e) => {
-      throw Error(e)
-    })
-    return site
-  }
-
-  const setFormElement = ({ element, value }) =>
-    dispatch({ type: 'update-form', element, value })
-
+const FormEditSite = ({ siteContent, setFormElement }) => {
+  const { currentValues, originalRecord } = siteContent
   const [redirect, setRedirect] = useState(false)
 
-  // Fetch data on initial load
-  useEffect(() => {
-    fetchSite(record).then((res) => {
-      setForm(res)
-      setLoading(false)
-    })
-  }, [])
-
-  // Make subscription for when site is changed in front of user's eyes
-  useEffect(() => {
-    const subscription = DataStore.observe(Site).subscribe(() => {
-      DataStore.query(Site, record).then((record) => {
-        console.log('Datastore subscription ', record)
-        if (record) setForm(record)
-      })
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
-
-  if (error) return <h1>error</h1>
-  if (loading) return <h1>loading</h1>
   if (redirect) return <Redirect to="/" />
-
-  // ! This is where can carry out actions based on the data in the form.
-  function submitData() {
-    DataStore.save(
-      Site.copyOf(originalRecord, (updated) => {
-        updated.exposure = currentValues.exposure
-        updated.reefType = currentValues.reefType
-        updated.reefZone = currentValues.reefZone
-        updated.country = currentValues.country
-        updated.notes = currentValues.notes
-        updated.name = currentValues.name
-        updated.latitude = currentValues.latitude
-        updated.longitude = currentValues.longitude
-      }),
-    )
-      .then((response) => {
-        console.log('Response to datastore save ', response)
-      })
-      .catch((e) => {
-        console.warn('oh noooo 👨‍🚒 ', e)
-      })
-  }
 
   function submitFields(fields) {
     DataStore.save(
       Site.copyOf(originalRecord, (updated) => {
         Object.keys(fields).forEach((field) => (updated[field] = fields[field]))
-      }),
-    )
-  }
-
-  function submitField({ key, value }) {
-    DataStore.save(
-      Site.copyOf(originalRecord, (updated) => {
-        updated[key] = value
       }),
     )
   }
@@ -183,7 +71,9 @@ const FormEditSite = ({ record }) => {
                   onChange={(e) =>
                     setFormElement({ element: 'name', value: e.target.value })
                   }
-                  onBlur={submitData}
+                  onBlur={() => {
+                    submitFields({ name: currentValues.name })
+                  }}
                 />
               </FormField>
             </Box>
@@ -204,11 +94,10 @@ const FormEditSite = ({ record }) => {
                         value: countries[option],
                       })
                       setTimeout(
-                        submitField({
-                          key: 'country',
-                          value: countries[option],
+                        submitFields({
+                          country: countries[option],
                         }),
-                        250,
+                        50,
                       )
                     }}
                   />
@@ -277,7 +166,10 @@ const FormEditSite = ({ record }) => {
                       element: 'exposure',
                       value: reefExposures[option],
                     })
-                    submitData()
+                    setTimeout(
+                      () => submitFields({ exposure: reefExposures[option] }),
+                      50,
+                    )
                   }}
                 />
               </FormField>
@@ -290,7 +182,10 @@ const FormEditSite = ({ record }) => {
                       element: 'reefType',
                       value: reefTypes[option],
                     })
-                    submitData()
+                    setTimeout(
+                      () => submitFields({ reefType: reefTypes[option] }),
+                      50,
+                    )
                   }}
                 />
               </FormField>
@@ -303,7 +198,10 @@ const FormEditSite = ({ record }) => {
                       element: 'reefZone',
                       value: reefZones[option],
                     })
-                    submitData()
+                    setTimeout(
+                      () => submitFields({ reefZone: reefZones[option] }),
+                      50,
+                    )
                   }}
                 />
               </FormField>
@@ -318,7 +216,12 @@ const FormEditSite = ({ record }) => {
                   onChange={(e) =>
                     setFormElement({ element: 'notes', value: e.target.value })
                   }
-                  onBlur={submitData}
+                  onBlur={() =>
+                    setTimeout(
+                      () => submitFields({ notes: currentValues.notes }),
+                      50,
+                    )
+                  }
                 />
               </FormField>
             </Box>
