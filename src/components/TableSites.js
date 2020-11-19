@@ -3,17 +3,17 @@ import PropTypes from 'prop-types'
 import {
   Anchor,
   Box,
-  Text,
   Table,
   TableHeader,
   TableBody,
   TableRow,
   TableCell,
   Heading,
-  Layer,
   Button,
 } from 'grommet'
 import { Edit, DocumentText as View, Trash as Delete } from 'grommet-icons'
+
+import ModalConfirmation from './ModalConfirmation'
 
 import { deleteRecord, clearLocalData } from '../lib/api'
 import { reverseCountries } from '../lib/countries'
@@ -30,46 +30,18 @@ function TableSites(props) {
   return (
     <>
       {deleteConfirmModal && (
-        <Layer
-          onClickOutside={() => setDeleteConfirmModal(null)}
-          onEsc={() => setDeleteConfirmModal(null)}
-        >
-          <Box width="medium">
-            <Box pad="medium">Do you want to delete</Box>
-            <Box direction="row" width="fill" justify="around" pad="medium">
-              <Button
-                label="yes"
-                onClick={() => {
-                  deleteRecord(deleteConfirmModal)
-                  setDeleteConfirmModal(null)
-                }}
-                primary
-              />
-              <Button label="no" onClick={() => setDeleteConfirmModal(null)} />
-            </Box>
-          </Box>
-        </Layer>
+        <ModalConfirmation
+          question="Do you want to delete"
+          closeModal={() => setDeleteConfirmModal(null)}
+          executeAction={() => deleteRecord(deleteConfirmModal)}
+        />
       )}
       {clearConfirmModal && (
-        <Layer
-          onClickOutside={() => setClearConfirmModal(null)}
-          onEsc={() => setClearConfirmModal(null)}
-        >
-          <Box width="medium">
-            <Box pad="medium">Do you want to clear local storage</Box>
-            <Box direction="row" width="fill" justify="around" pad="medium">
-              <Button
-                label="yes"
-                onClick={() => {
-                  clearLocalData()
-                  setClearConfirmModal(false)
-                }}
-                primary
-              />
-              <Button label="no" onClick={() => setClearConfirmModal(false)} />
-            </Box>
-          </Box>
-        </Layer>
+        <ModalConfirmation
+          question="Do you want to clear local storage"
+          closeModal={() => setClearConfirmModal(false)}
+          executeAction={() => clearLocalData()}
+        />
       )}
       <Box direction="column">
         <Box
