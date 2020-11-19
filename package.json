@@ -8,6 +8,7 @@
     "grommet-icons": "^4.4.0",
     "leaflet": "^1.7.1",
     "pouchdb": "^7.2.2",
+    "prettier": "^2.1.2",
     "react": "^16.13.1",
     "react-dom": "^16.14.0",
     "react-leaflet": "^3.0.2",
@@ -23,7 +24,8 @@
     "cors": "add-cors-to-couchdb http://couchdb:5984 -u admin -p password",
     "lint": "eslint './src/**/*.js'",
     "lint:fix": "eslint './src/**/*.js' --fix",
-    "plop": "plop"
+    "plop": "plop",
+    "prettier": "prettier --write ./src/**/*.js "
   },
   "browserslist": {
     "production": [
