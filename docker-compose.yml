@@ -16,6 +16,9 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_API_MODE=amplify
+      - REACT_APP_AMPLIFY_REGION=us-west-2
+      - REACT_APP_AMPLIFY_EP=https://ucoyjvcf2jdv5mnfpqoctjyihq.appsync-api.us-west-2.amazonaws.com/graphql
+      - REACT_APP_AMPLIFY_KEY=$REACT_APP_AMPLIFY_KEY
   
   pouchdb-app:
     container_name: pouchdb-app
@@ -40,8 +43,8 @@ services:
     volumes:
         - couch_data:/opt/couchdb/data
     environment:
-      - COUCHDB_USER=admin
-      - COUCHDB_PASSWORD=password
+      - COUCHDB_USER=$COUCHDB_USER
+      - COUCHDB_PASSWORD=$COUCHDB_PASSWORD
 
 volumes:
     couch_data:
