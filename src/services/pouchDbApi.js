@@ -34,30 +34,30 @@ export const startPouchdbServer = () => {
   console.log('startPouchdbServer')
 
   
-  db.sync(remoteCouch, {live: true})
-    .on('change', function (info) {
-      console.log('change', info);
-      // showTodos();
-    })
-    .on('paused', function () {
-      console.log('paused');
-      // console.warn(err);
-    })
-    .on('active', function (msg) {
-      console.log('active', msg);
-    })
-    .on('denied', function (err) {
-      console.log('denied', err);
-      // console.error(err);
-    })
-    .on('complete', function (info) {
-      console.log("complete", info)
-      // showTodos();
-    })
-    .on('error', function (err) {
-      console.log('error', err);
-      // syncError();
-    });
+  // db.sync(remoteCouch, {live: true})
+  //   .on('change', function (info) {
+  //     console.log('change', info);
+  //     // showTodos();
+  //   })
+  //   .on('paused', function () {
+  //     console.log('paused');
+  //     // console.warn(err);
+  //   })
+  //   .on('active', function (msg) {
+  //     console.log('active', msg);
+  //   })
+  //   .on('denied', function (err) {
+  //     console.log('denied', err);
+  //     // console.error(err);
+  //   })
+  //   .on('complete', function (info) {
+  //     console.log("complete", info)
+  //     // showTodos();
+  //   })
+  //   .on('error', function (err) {
+  //     console.log('error', err);
+  //     // syncError();
+  //   });
 }
 
 export const retrieveAllPouchdbRecords = async () => {
