@@ -68,23 +68,84 @@ export const deletePouchdbRecord = async (id) => {
 
 export const createPouchdbRecord = async (data) => {
   console.log('createPouchdbRecord', data)
-  data._id = uuidv4()
-  await db.put(data)
+  // data._id = uuidv4()
+
+  // gross but running out of time
+  const date = new Date()
+
+  const pouchSchemaCompliantRecord = {
+    _id: uuidv4(),
+    updated_by: "7901c943-5370-4896-a9ed-4b6ff5cb6ba0",
+    created_on: date.toISOString(),
+    updated_on: date.toISOString(),
+    data: null,
+    name: data.name,
+    location: {
+      type: "Point",
+      coordinates: [
+        data.longitude,
+        data.latitude
+      ]
+    },
+    notes: data.notes,
+    created_by: "7901c943-5370-4896-a9ed-4b6ff5cb6ba0",
+    project: "8c213ce8-7973-47a5-9359-3a0ef12ed203",
+    country: data.country,
+    reef_type: data.reefType,
+    reef_zone: data.reefZone,
+    exposure: data.exposure,
+    predecessor: null
+  }
+
+  await db.put(pouchSchemaCompliantRecord)
 }
 
 export const updatePouchdbRecordFields = async ({ originalRecord, fields }) => {
   console.log('updatePouchdbRecordFields', originalRecord)
 
   Object.keys(fields).forEach((field) => (originalRecord[field] = fields[field]))
+
+  // gross but running out of time
+  const date = new Date()
+  const pouchSchemaCompliantRecord = {
+    _id: originalRecord.id,
+    updated_by: "7901c943-5370-4896-a9ed-4b6ff5cb6ba0",
+    created_on: originalRecord.created_on,
+    updated_on: date.toISOString(),
+    data: null,
+    name: originalRecord.name,
+    location: {
+      type: "Point",
+      coordinates: [
+        originalRecord.longitude,
+        originalRecord.latitude
+      ]
+    },
+    notes: originalRecord.notes,
+    created_by: "7901c943-5370-4896-a9ed-4b6ff5cb6ba0",
+    project: "8c213ce8-7973-47a5-9359-3a0ef12ed203",
+    country: originalRecord.country,
+    reef_type: originalRecord.reefType,
+    reef_zone: originalRecord.reefZone,
+    exposure: originalRecord.exposure,
+    predecessor: null,
+    _rev: originalRecord._rev
+  }
   
-  await db.put(originalRecord).then((r) => {
+  await db.put(pouchSchemaCompliantRecord).then((r) => {
     _rec.next(r)
   })
 }
 
 export const fetchPouchdbRecord = async (id) => {
   var obj = await db.get(id)
+
+  // gross but running out of time
   obj.id = obj._id
+  obj.longitude = obj.location.coordinates[0]
+  obj.latitude = obj.location.coordinates[1]
+  obj.reefType = obj.reef_type
+  obj.reefZone = obj.reef_zone
   return obj
 }
 
