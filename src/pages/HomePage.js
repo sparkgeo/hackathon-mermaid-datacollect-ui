@@ -5,7 +5,8 @@ import {
   allRecordSubscription,
   startServer,
 } from '../lib/api'
-
+import { Heading } from 'grommet'
+import { Helmet } from 'react-helmet'
 import TableSites from '../components/TableSites'
 
 export default function HomePage() {
@@ -34,7 +35,15 @@ export default function HomePage() {
   }, [])
 
   if (loading) return <h1>loading</h1>
-  if (error) return <h1>{error}</h1>
+  if (error)
+    return (
+      <>
+        <Helmet>
+          <title>You broke it</title>
+        </Helmet>
+        <Heading>{error}</Heading>
+      </>
+    )
 
   return <TableSites sites={records} />
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import FormEditSite from '../components/FormEditSite'
-
+import { Helmet } from 'react-helmet'
 import { Heading } from 'grommet'
 
 import { fetchRecord, singleRecordSubscription } from '../lib/api'
@@ -86,10 +86,23 @@ const EditSitePage = () => {
   }, [])
 
   if (loading) return <Heading>Loading</Heading>
-  if (error) return <Heading>Error</Heading>
+  if (error)
+    return (
+      <>
+        <Helmet>
+          <title>You broke it</title>
+        </Helmet>
+        <Heading>Error</Heading>
+      </>
+    )
 
   return (
-    <FormEditSite siteContent={siteContent} setFormElement={setFormElement} />
+    <>
+      <Helmet>
+        <title>Editing: {siteContent.currentValues.name}</title>
+      </Helmet>
+      <FormEditSite siteContent={siteContent} setFormElement={setFormElement} />
+    </>
   )
 }
 
