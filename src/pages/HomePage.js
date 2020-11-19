@@ -30,7 +30,9 @@ export default function HomePage() {
     const subscription = allRecordSubscription({ cb: setRecords })
 
     return () => {
-      subscription.unsubscribe()
+      if (subscription) {
+        subscription.unsubscribe()
+      }
     }
   }, [])
 

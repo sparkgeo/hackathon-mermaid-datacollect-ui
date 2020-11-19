@@ -25,18 +25,20 @@ export const fetchAppsyncRecord = async (id) => {
 export const clearLocalAppsyncData = async () => await DataStore.clear()
 
 // Returns a fn that allows for the component to unsub
-export const allRecordAppsyncSubscription = ({ cb }) =>
-  DataStore.observe(Site).subscribe(() => {
-    DataStore.query(Site).then((records) => {
-      console.log('CB ', cb)
-      cb(records)
-    })
+// Returns a fn that allows for the component to unsub
+export const allRecordAppsyncSubscription = ({ cb }) => {
+  console.log('allRecordAppsyncSubscription')
+  return DataStore.observe(Site).subscribe(async (event) => {
+    console.log('allRecordAppsyncSubscription: Subscription event ', event)
+    const records = await retrieveAllAppsyncRecords()
+    cb(records)
   })
-
-export const singleRecordAppsyncSubscription = ({ cb, id }) =>
-  DataStore.observe(Site, id).subscribe(() => {
-    DataStore.query(Site, id).then((record) => {
-      console.log('CB ', cb)
-      cb(record)
-    })
+}
+export const singleRecordAppsyncSubscription = ({ cb, id }) => {
+  console.log('singleRecordAppsyncSubscription')
+  return DataStore.observe(Site, id).subscribe(async (event) => {
+    console.log('singleRecordAppsyncSubscription: Subscription event ', event)
+    const record = await fetchAppsyncRecord(id)
+    cb(record)
   })
+}
