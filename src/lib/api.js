@@ -1,42 +1,72 @@
-import { DataStore } from '@aws-amplify/datastore'
-import { Site } from '../models'
+import {
+  startAppsyncServer,
+  retrieveAllAppsyncRecords,
+  deleteAppsyncRecord,
+  createAppsyncRecord,
+  fetchAppsyncRecord,
+  clearLocalAppsyncData,
+  allRecordAppsyncSubscription,
+  singleRecordAppsyncSubscription,
+} from '../services/appSyncApi'
 
-export const startServer = () => {
-  DataStore.start()
+let startServerFn
+let retrieveAllRecordsFn
+let deleteRecordFn
+let createRecordFn
+let fetchRecordFn
+let clearLocalDataFn
+let allRecordSubscriptionFn
+let singleRecordSubscriptionFn
+
+if (process.env.REACT_APP_API_MODE === 'amplify') {
+  startServerFn = startAppsyncServer
+  retrieveAllRecordsFn = retrieveAllAppsyncRecords
+  deleteRecordFn = deleteAppsyncRecord
+  createRecordFn = createAppsyncRecord
+  fetchRecordFn = fetchAppsyncRecord
+  clearLocalDataFn = clearLocalAppsyncData
+  allRecordSubscriptionFn = allRecordAppsyncSubscription
+  singleRecordSubscriptionFn = singleRecordAppsyncSubscription
+} else {
+  startServerFn = () => {
+    throw Error('Not initialized')
+  }
+
+  retrieveAllRecordsFn = async () => {
+    throw Error('Not initialized')
+  }
+
+  deleteRecordFn = async (id) => {
+    throw Error('Not initialized')
+  }
+
+  createRecordFn = async (data) => {
+    throw Error('Not initialized')
+  }
+
+  fetchRecordFn = async (id) => {
+    throw Error('Not initialized')
+  }
+
+  clearLocalDataFn = async () => {
+    throw Error('Not initialized')
+  }
+
+  // Returns a fn that allows for the component to unsub
+  allRecordSubscriptionFn = ({ cb }) => {
+    throw Error('Not initialized')
+  }
+
+  singleRecordSubscriptionFn = ({ cb, id }) => {
+    throw Error('Not initialized')
+  }
 }
 
-export const retrieveAllRecords = async () => await DataStore.query(Site)
-
-export const deleteRecord = async (id) => {
-  await DataStore.delete(Site, id)
-}
-
-export const createRecord = async (data) => {
-  await DataStore.save(new Site(data))
-}
-
-export const fetchRecord = async (id) => {
-  const site = await DataStore.query(Site, id).catch((e) => {
-    throw Error(e)
-  })
-  return site
-}
-
-export const clearLocalData = async () => await DataStore.clear()
-
-// Returns a fn that allows for the component to unsub
-export const allRecordSubscription = ({ cb }) =>
-  DataStore.observe(Site).subscribe(() => {
-    DataStore.query(Site).then((records) => {
-      console.log('CB ', cb)
-      cb(records)
-    })
-  })
-
-export const singleRecordSubscription = ({ cb, id }) =>
-  DataStore.observe(Site, id).subscribe(() => {
-    DataStore.query(Site, id).then((record) => {
-      console.log('CB ', cb)
-      cb(record)
-    })
-  })
+export const startServer = startServerFn
+export const retrieveAllRecords = retrieveAllRecordsFn
+export const deleteRecord = deleteRecordFn
+export const createRecord = createRecordFn
+export const fetchRecord = fetchRecordFn
+export const clearLocalData = clearLocalDataFn
+export const allRecordSubscription = allRecordSubscriptionFn
+export const singleRecordSubscription = singleRecordSubscriptionFn
