@@ -31,7 +31,7 @@ export const startPouchdbServer = () => {
   console.log('startPouchdbServer')
 
   
-  db.sync(remoteCouch, {live: true})
+  db.sync(remoteCouch, {live: false})
     .on('change', function (info) {
       console.log('change', info);
     })
