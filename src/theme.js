@@ -276,7 +276,7 @@ const grommetTheme = {
   button: {
     border: {
       width: '2px',
-      radius: '18px',
+      radius: '3px',
     },
     primary: {},
     disabled: {

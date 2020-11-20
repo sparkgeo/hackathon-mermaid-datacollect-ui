@@ -17,6 +17,7 @@ import { Redirect } from 'react-router-dom'
 
 import MapContent from './MapContent'
 
+import useCurrentUser from '../hooks/useCurrentUser'
 import { countries, reverseCountries } from '../lib/countries'
 import { reefTypes, reverseReefTypes } from '../lib/reefTypes'
 import { reefZones, reverseReefZones } from '../lib/reefZones'
@@ -33,8 +34,11 @@ L.Marker.prototype.options.icon = DefaultIcon
 const FormEditSite = ({ siteContent, setFormElement }) => {
   const { currentValues, originalRecord } = siteContent
   const [redirect, setRedirect] = useState(false)
+  const { user } = useCurrentUser()
 
   if (redirect) return <Redirect to="/" />
+
+  console.log('original record ', originalRecord)
 
   return (
     <>
@@ -54,7 +58,7 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
               background="light-4"
               border={{ size: 'xsmall', color: 'dark-3', side: 'bottom' }}
             />
-            <Box margin="small">
+            <Box margin="small" direction="column">
               <FormField label="Name" required>
                 <TextInput
                   value={currentValues.name}
@@ -64,7 +68,14 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                   onBlur={() => {
                     updateRecordFields({
                       originalRecord,
-                      fields: { name: currentValues.name },
+                      fields: {
+                        name: currentValues.name,
+                        siteStatus: [
+                          ...originalRecord.siteStatus.filter(
+                            (i) => i.field !== 'name' && i.user !== user,
+                          ),
+                        ],
+                      },
                     })
                   }}
                   onFocus={() => {
@@ -72,13 +83,26 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                       originalRecord,
                       fields: {
                         siteStatus: [
-                          { user: 'Sparkgeo', field: 'name', time: Date.now() },
+                          ...originalRecord.siteStatus,
+                          {
+                            id: 1,
+                            user,
+                            field: 'name',
+                            time: 1,
+                          },
                         ],
                       },
                     })
                   }}
                 />
               </FormField>
+              <Box direction="row">
+                {originalRecord.siteStatus
+                  .filter((i) => i.field === 'name')
+                  .map((i, index) => (
+                    <Button label={i.user} />
+                  ))}
+              </Box>
             </Box>
             <Box direction="row">
               <Box

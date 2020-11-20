@@ -2,6 +2,7 @@ import React from 'react'
 import { Footer, Heading, Header, Layer, Main, Box, Text } from 'grommet'
 import { Menu } from 'grommet-icons'
 import Breadcrumbs from '../components/Breadcrumbs'
+import InputUserName from '../components/InputUserName'
 
 function LayoutSignedIn({ children }) {
   return (
@@ -11,9 +12,13 @@ function LayoutSignedIn({ children }) {
         background="dark-2"
         pad={{ horizontal: 'medium' }}
       >
-        <Box direction='row' gap='small'>
+        <Box direction="row" gap="small">
           <Heading level="4">mermaid</Heading>
-          <Text alignSelf='center' color='accent-1' size='small'>{process.env.REACT_APP_API_MODE === 'amplify' ? 'AMPLIFY' : 'POUCHDB'}</Text>
+          <Text alignSelf="center" color="accent-1" size="small">
+            {process.env.REACT_APP_API_MODE === 'amplify'
+              ? 'AMPLIFY'
+              : 'POUCHDB'}
+          </Text>
         </Box>
         <Box direction="row">
           <Box margin={{ right: 'small' }}>Projects</Box>
@@ -33,6 +38,7 @@ function LayoutSignedIn({ children }) {
           border={{ bottom: 'xsmall' }}
         >
           <Breadcrumbs />
+          <InputUserName />
         </Box>
         <>{children}</>
       </Main>

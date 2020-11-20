@@ -7,6 +7,7 @@
     "@aws-amplify/datastore": "^2.7.3",
     "add-cors-to-couchdb": "0.0.6",
     "debounce": "^1.2.0",
+    "faker": "^5.1.0",
     "grommet": "^2.14.0",
     "grommet-icons": "^4.4.0",
     "leaflet": "^1.7.1",

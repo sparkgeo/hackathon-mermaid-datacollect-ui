@@ -13,6 +13,7 @@ import LayoutSignedIn from './layouts/LayoutSignedIn'
 import theme from './theme'
 import './App.css'
 import Router from './pages/___Routes'
+import { UserContextProvider } from './context/UserContext'
 
 import { startServer } from './lib/api'
 
@@ -23,9 +24,11 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <Grommet theme={theme} full>
-          <LayoutSignedIn>
-            <Router />
-          </LayoutSignedIn>
+          <UserContextProvider>
+            <LayoutSignedIn>
+              <Router />
+            </LayoutSignedIn>
+          </UserContextProvider>
         </Grommet>
       </ThemeProvider>
     </>
