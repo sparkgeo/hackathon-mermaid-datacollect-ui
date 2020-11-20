@@ -22,6 +22,7 @@ import { reefTypes, reverseReefTypes } from '../lib/reefTypes'
 import { reefZones, reverseReefZones } from '../lib/reefZones'
 import { reefExposures, reverseReefExposures } from '../lib/reefExposures'
 import { updateRecordFields } from '../lib/api'
+import { submitRecordToPostgres } from '../services/postgresApi'
 
 let DefaultIcon = leafetIcon({
   iconUrl: icon,
@@ -240,13 +241,23 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                 />
               </FormField>
             </Box>
-            <Box pad={{ vertical: 'small' }} width="small" margin="small">
-              <Button
-                label="Finish Session"
-                color="status-ok"
-                secondary
-                onClick={() => setRedirect(true)}
-              />
+            <Box direction="row" align="start">
+              <Box pad={{ vertical: 'small' }} width="small" margin="small">
+                <Button
+                  label="Finish Session"
+                  color="status-ok"
+                  secondary
+                  onClick={() => setRedirect(true)}
+                />
+              </Box>
+              { process.env.REACT_APP_API_MODE === 'POUCHDB'}
+              <Box pad={{ vertical: 'small' }} width="small" margin="small">
+                <Button
+                  label="Submit"
+                  secondary
+                  onClick={() => submitRecordToPostgres(currentValues)}
+                />
+              </Box>
             </Box>
           </Box>
         </Form>
