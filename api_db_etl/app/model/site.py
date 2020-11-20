@@ -28,7 +28,7 @@ site = Table(
     Column("data", JSONB),
     Column("name", String(255), nullable=False),
     Column("location", Geography("POINT"), nullable=False),
-    Column("notes", Text, nullable=False),
+    Column("notes", Text),
     Column("country_id", UUID, nullable=False),
     Column("exposure_id", UUID, nullable=False),
     Column(
