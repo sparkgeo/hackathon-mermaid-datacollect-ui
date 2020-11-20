@@ -16,8 +16,7 @@ export const submitRecordToPostgres = (siteData) => {
     })
     return response.json() // parses JSON response into native JavaScript objects
   }
-  debugger
-
+  
   postData(`${process.env.REACT_APP_POSTGRES_API_URL}/site/import/${siteData.id}?force=false`, siteData)
     .then(response => {
       console.log(response); // JSON data parsed by `data.json()` call

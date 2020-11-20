@@ -250,10 +250,10 @@ const FormEditSite = ({ siteContent, setFormElement }) => {
                   onClick={() => setRedirect(true)}
                 />
               </Box>
+              { process.env.REACT_APP_API_MODE === 'POUCHDB'}
               <Box pad={{ vertical: 'small' }} width="small" margin="small">
                 <Button
                   label="Submit"
-                  // color=""
                   secondary
                   onClick={() => submitRecordToPostgres(currentValues)}
                 />
